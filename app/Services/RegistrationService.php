@@ -101,6 +101,7 @@ class RegistrationService
                     'email' => $email,
                     'email_normalized' => $email,
                     'city' => $data['city'] ?? null,
+                    'team' => $data['team'] ?? null,
                     'notes' => $data['notes'] ?? null,
                     'transfer_path' => $data['transfer_path'] ?? null,
                     'status' => RegistrationStatus::Pending,

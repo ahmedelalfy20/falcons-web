@@ -152,7 +152,15 @@ class HttpFlowTest extends TestCase
 
         // Invalid form data.
         $this->post('/register', ['ref' => $leader->unique_code, 'full_name' => 'x', 'phone' => '12', 'consent' => ''])
-            ->assertSessionHasErrors(['full_name', 'phone', 'consent']);
+            ->assertSessionHasErrors(['full_name', 'phone', 'consent', 'city', 'team']);
+
+        // Team must be one of the allowed teams.
+        $this->post('/register', $this->registerForm($leader->unique_code, ['team' => 'Invalid Team']))
+            ->assertSessionHasErrors('team');
+
+        // City is mandatory.
+        $this->post('/register', $this->registerForm($leader->unique_code, ['city' => '']))
+            ->assertSessionHasErrors('city');
 
         // Registration closed by admin.
         app(RoundService::class)->setRegistration($round, false);

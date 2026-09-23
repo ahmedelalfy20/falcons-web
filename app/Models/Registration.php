@@ -13,7 +13,7 @@ class Registration extends Model
 
     protected $fillable = [
         'competition_id', 'round_id', 'leader_id', 'full_name', 'phone', 'phone_normalized', 'email',
-        'email_normalized', 'city', 'notes', 'transfer_path', 'status', 'reviewed_at', 'reviewed_by', 'review_note', 'public_token',
+        'email_normalized', 'city', 'team', 'notes', 'transfer_path', 'status', 'reviewed_at', 'reviewed_by', 'review_note', 'public_token',
     ];
 
     protected function casts(): array

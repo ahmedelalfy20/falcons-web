@@ -63,7 +63,7 @@ abstract class TestCase extends BaseTestCase
     /** Full participant form payload for POST /register. */
     protected function registerForm(string $ref, array $overrides = []): array
     {
-        return array_merge(['ref' => $ref, 'full_name' => 'Sara Ali', 'phone' => '01112223334', 'email' => 'sara@example.com', 'consent' => '1', 'transfer_screenshot' => $this->image()], $overrides);
+        return array_merge(['ref' => $ref, 'full_name' => 'Sara Ali', 'phone' => '01112223334', 'email' => 'sara@example.com', 'city' => 'Cairo', 'team' => 'Million Team', 'consent' => '1', 'transfer_screenshot' => $this->image()], $overrides);
     }
 
     protected function participant(int $n, array $overrides = []): array
@@ -73,6 +73,7 @@ abstract class TestCase extends BaseTestCase
             'phone' => '0111'.str_pad((string) $n, 7, '0', STR_PAD_LEFT),
             'email' => "p{$n}@example.com",
             'city' => 'Cairo',
+            'team' => 'Million Team',
         ], $overrides);
     }
 }

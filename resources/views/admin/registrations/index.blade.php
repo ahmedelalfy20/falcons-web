@@ -75,6 +75,9 @@
                                 <td>
                                     <a href="{{ route('admin.registrations.show', $r) }}" class="font-semibold hover:text-brand-200">{{ $r->full_name }}</a>
                                     <div class="num mt-0.5 text-xs text-fg-subtle" dir="ltr"><span>#{{ $r->id }}</span> · {{ $r->phone }}@if ($r->email) · {{ $r->email }}@endif</div>
+                                    @if ($r->team)
+                                        <div class="mt-1"><span class="chip border-brand-500/25 bg-brand-500/[0.08] text-brand-300 text-[0.7rem] px-1.5 py-0.5 inline-flex items-center gap-1"><x-icon name="users" class="size-3" />{{ $r->team }}</span></div>
+                                    @endif
                                 </td>
                                 <td><div class="font-medium">{{ $r->leader?->name }}</div><div class="num text-xs text-fg-subtle" dir="ltr">{{ $r->leader?->unique_code }}</div></td>
                                 <td class="text-fg-muted">{{ $r->round?->displayName() }}</td>
@@ -98,6 +101,9 @@
                                 <span class="num text-xs text-fg-subtle">#{{ $r->id }}</span>
                             </div>
                             <p class="num mt-1 text-sm text-fg-muted" dir="ltr">{{ $r->phone }}</p>
+                            @if ($r->team)
+                                <div class="mt-1"><span class="chip border-brand-500/25 bg-brand-500/[0.08] text-brand-300 text-[0.7rem] px-1.5 py-0.5 inline-flex items-center gap-1"><x-icon name="users" class="size-3" />{{ $r->team }}</span></div>
+                            @endif
                             <p class="mt-1 text-xs text-fg-subtle">{{ $r->leader?->name }} · {{ $r->created_at->diffForHumans() }}</p>
                             </div>
                         </a>

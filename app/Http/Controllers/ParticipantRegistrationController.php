@@ -38,7 +38,7 @@ class ParticipantRegistrationController extends Controller
     public function store(StoreRegistrationRequest $request)
     {
         // Validated field set; the service re-checks leader, competition, round, timer and duplicates.
-        $data = $request->safe()->only(['full_name', 'phone', 'email', 'city', 'notes']);
+        $data = $request->safe()->only(['full_name', 'phone', 'email', 'city', 'team', 'notes']);
 
         // The payment screenshot is stored privately (never publicly reachable) and
         // removed again if the registration is refused for any reason.

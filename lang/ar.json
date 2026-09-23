@@ -1,4 +1,13 @@
 {
+    "Select your team": "اختر فريقك",
+    "Please select your team.": "يرجى اختيار فريقك.",
+    "Please select a valid team.": "يرجى اختيار فريق صحيح.",
+    "Please enter your city.": "يرجى إدخال مدينتك.",
+    "Choose one": "اختر واحداً",
+    "Team": "الفريق",
+    "team": "الفريق",
+    "City": "المدينة",
+    "e.g. Cairo, Alexandria...": "مثال: القاهرة، الإسكندرية...",
     "Page navigation": "التنقل بين الصفحات",
     "\":name\" is already active. Archive it first — only one competition can be active at a time.": "\":name\" مفعّلة بالفعل. قم بأرشفتها أولًا — يمكن تفعيل مسابقة واحدة فقط في كل مرة.",
     "1 hour": "ساعة واحدة",

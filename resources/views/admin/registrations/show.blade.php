@@ -38,6 +38,7 @@
                 <dl class="grid sm:grid-cols-2">
                     @foreach ([
                         __('Full name') => $registration->full_name,
+                        __('Team') => $registration->team ?: '—',
                         __('Phone') => $registration->phone,
                         __('Email') => $registration->email ?: '—',
                         __('City') => $registration->city ?: '—',
