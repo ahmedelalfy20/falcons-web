@@ -38,7 +38,7 @@ class LeaderSignupController extends Controller
         }
 
         try {
-            $leader = $leaders->create($competition, $request->safe()->only(['name', 'phone', 'email']) + ['photo' => $photo], $request->validated('password'));
+            $leader = $leaders->create($competition, $request->safe()->only(['name', 'phone', 'email', 'team']) + ['photo' => $photo], $request->validated('password'));
         } catch (\Throwable $e) {
             $images->delete($photo);
             throw $e;

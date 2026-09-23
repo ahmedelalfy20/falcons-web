@@ -24,7 +24,12 @@
                         </label>
                     </form>
                     <div>
-                        <p class="eyebrow">{{ $competition->tr('name') }}</p>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <p class="eyebrow">{{ $competition->tr('name') }}</p>
+                            @if ($leader->team)
+                                <span class="chip border-brand-500/30 bg-brand-500/[0.1] text-brand-300 text-xs px-2 py-0.5 inline-flex items-center gap-1 font-medium"><x-icon name="users" class="size-3.5" />{{ $leader->team }}</span>
+                            @endif
+                        </div>
                         <h1 class="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">{{ __('Hi, :name', ['name' => \Illuminate\Support\Str::before($leader->name, ' ')]) }}</h1>
                     </div>
                 </div>

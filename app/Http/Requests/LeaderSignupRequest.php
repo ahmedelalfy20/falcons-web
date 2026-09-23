@@ -14,6 +14,15 @@ class LeaderSignupRequest extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'name' => trim(preg_replace('/\s+/u', ' ', (string) $this->input('name'))),
+            'team' => trim((string) $this->input('team')),
+            'email' => $this->filled('email') ? trim((string) $this->input('email')) : null,
+        ]);
+    }
+
     public function rules(): array
     {
         return [
@@ -24,6 +33,7 @@ class LeaderSignupRequest extends FormRequest
                 }
             }],
             'email' => ['required', 'email:rfc', 'max:190', 'unique:users,email'],
+            'team' => ['required', 'string', \Illuminate\Validation\Rule::in(['Million Team', '3AQRAB', 'Mega Team'])],
             'password' => ['required', 'confirmed', Password::defaults()],
             'photo' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:8192', 'dimensions:min_width=200,min_height=200'],
             'website' => ['prohibited'],
@@ -34,6 +44,8 @@ class LeaderSignupRequest extends FormRequest
     {
         return [
             'name.regex' => __('Please use letters only in your name.'),
+            'team.required' => __('Please select your team.'),
+            'team.in' => __('Please select a valid team.'),
             'email.unique' => __('An account with this email already exists. Please log in.'),
             'photo.required' => __('Please add a clear personal photo — it appears next to your name on the live leaderboard.'),
             'photo.image' => __('The photo must be an image (JPG, PNG or WebP).'),
@@ -45,6 +57,9 @@ class LeaderSignupRequest extends FormRequest
 
     public function attributes(): array
     {
-        return ['photo' => __('personal photo')];
+        return [
+            'photo' => __('personal photo'),
+            'team' => __('team'),
+        ];
     }
 }

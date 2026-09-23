@@ -13,7 +13,7 @@ class Leader extends Model
 
     public const STATUSES = ['pending', 'active', 'suspended', 'rejected'];
 
-    protected $fillable = ['competition_id', 'user_id', 'name', 'phone', 'phone_normalized', 'email', 'photo', 'unique_code', 'qr_token', 'status', 'approved_at', 'approved_by'];
+    protected $fillable = ['competition_id', 'user_id', 'name', 'phone', 'phone_normalized', 'email', 'team', 'photo', 'unique_code', 'qr_token', 'status', 'approved_at', 'approved_by'];
 
     protected function casts(): array
     {

@@ -43,6 +43,7 @@
             <p class="num mt-4 text-center text-xl font-extrabold tracking-[0.08em]" dir="ltr">{{ $leader->unique_code }}</p>
             <button type="button" class="btn btn-outline btn-sm mt-3 w-full" @click="copy()"><x-icon name="copy" class="size-4" /><span x-text="copied ? @js(__('Copied!')) : @js(__('Copy referral link'))"></span></button>
             <dl class="mt-5 space-y-3 border-t border-line pt-4 text-sm">
+                <div class="flex justify-between gap-3"><dt class="text-fg-subtle">{{ __('Team') }}</dt><dd>{{ $leader->team ?: '—' }}</dd></div>
                 <div class="flex justify-between gap-3"><dt class="text-fg-subtle">{{ __('Phone') }}</dt><dd dir="ltr">{{ $leader->phone }}</dd></div>
                 <div class="flex justify-between gap-3"><dt class="text-fg-subtle">{{ __('Email') }}</dt><dd class="truncate" dir="ltr">{{ $leader->email ?: '—' }}</dd></div>
                 <div class="flex justify-between gap-3"><dt class="text-fg-subtle">{{ __('Login account') }}</dt><dd>{{ $leader->user ? __('Yes') : __('No') }}</dd></div>

@@ -28,6 +28,24 @@
             <x-field name="email" type="email" :label="__('Email')" :value="$leader->email" dir="ltr" maxlength="190" />
         </div>
         <div>
+            <span class="label">{{ __('Team') }}</span>
+            <div class="grid gap-2 sm:grid-cols-3">
+                @php
+                    $teams = [
+                        'Million Team' => 'Million Team (مليون تيم)',
+                        '3AQRAB' => '3AQRAB (عقرب)',
+                        'Mega Team' => 'Mega Team (ميجا تيم)',
+                    ];
+                @endphp
+                @foreach ($teams as $val => $label)
+                    <label class="flex min-h-12 cursor-pointer items-center gap-3 rounded-xl border border-line bg-ink-900 px-4 text-sm has-[:checked]:border-brand-500/60 has-[:checked]:bg-brand-500/[0.06]">
+                        <input type="radio" name="team" value="{{ $val }}" @checked(old('team', $leader->team) === $val) class="accent-brand-500"> {{ $label }}
+                    </label>
+                @endforeach
+            </div>
+            @error('team')<p class="field-error">{{ $message }}</p>@enderror
+        </div>
+        <div>
             <span class="label">{{ __('Status') }}</span>
             <div class="grid gap-2 sm:grid-cols-2">
                 @php

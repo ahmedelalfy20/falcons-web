@@ -215,10 +215,11 @@ class HttpFlowTest extends TestCase
         $c = $this->competition();
         $this->runningRound($c);
 
-        $this->post('/competition/join', ['name' => 'Mona Adel', 'phone' => '01223334445', 'email' => 'mona@example.com', 'password' => 'secret123', 'password_confirmation' => 'secret123', 'photo' => $this->image('me.jpg', 400, 400)])
+        $this->post('/competition/join', ['name' => 'Mona Adel', 'phone' => '01223334445', 'email' => 'mona@example.com', 'team' => 'Million Team', 'password' => 'secret123', 'password_confirmation' => 'secret123', 'photo' => $this->image('me.jpg', 400, 400)])
             ->assertRedirect(route('leader.dashboard'));
 
         $leader = Leader::where('email', 'mona@example.com')->firstOrFail();
+        $this->assertSame('Million Team', $leader->team);
         $this->assertMatchesRegularExpression('/^LDR-[A-Z0-9]{8}$/', $leader->unique_code);
         $this->get('/leader')->assertOk()->assertSee($leader->unique_code)->assertSee(route('register', ['ref' => $leader->unique_code]), false);
         $this->get('/leader/qr.svg')->assertOk()->assertHeader('Content-Type', 'image/svg+xml');
@@ -267,8 +268,9 @@ class HttpFlowTest extends TestCase
     {
         $c = $this->competition();
         $round = $this->runningRound($c);
-        $form = ['name' => 'Mona Adel', 'phone' => '01223334445', 'email' => 'mona@example.com', 'password' => 'secret123', 'password_confirmation' => 'secret123'];
+        $form = ['name' => 'Mona Adel', 'phone' => '01223334445', 'email' => 'mona@example.com', 'team' => 'Million Team', 'password' => 'secret123', 'password_confirmation' => 'secret123'];
 
+        $this->post('/competition/join', array_diff_key($form, ['team' => 1]))->assertSessionHasErrors('team');
         $this->post('/competition/join', $form)->assertSessionHasErrors('photo');
         $this->post('/competition/join', $form + ['photo' => $this->image('tiny.jpg', 50, 50)])->assertSessionHasErrors('photo');
         $this->assertSame(0, Leader::count());
@@ -276,6 +278,7 @@ class HttpFlowTest extends TestCase
         $this->post('/competition/join', $form + ['photo' => $this->image('me.jpg', 800, 1000)])->assertRedirect(route('leader.dashboard'));
         $leader = Leader::firstOrFail();
         $this->assertSame('pending', $leader->status);
+        $this->assertSame('Million Team', $leader->team);
         $this->assertNotNull($leader->photo);
         Storage::disk('public')->assertExists(substr($leader->photo, 8));
         Storage::disk('public')->assertExists(str_replace('.webp', '-thumb.webp', substr($leader->photo, 8)));
@@ -296,7 +299,7 @@ class HttpFlowTest extends TestCase
     {
         $c = $this->competition();
         $this->runningRound($c);
-        $this->post('/competition/join', ['name' => 'Mona Adel', 'phone' => '01223334445', 'email' => 'mona@example.com', 'password' => 'secret123', 'password_confirmation' => 'secret123', 'photo' => $this->image('me.jpg', 400, 400)]);
+        $this->post('/competition/join', ['name' => 'Mona Adel', 'phone' => '01223334445', 'email' => 'mona@example.com', 'team' => 'Million Team', 'password' => 'secret123', 'password_confirmation' => 'secret123', 'photo' => $this->image('me.jpg', 400, 400)]);
         auth()->logout();
         $leader = Leader::firstOrFail();
 

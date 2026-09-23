@@ -54,6 +54,9 @@
                                 <a href="{{ route('admin.leaders.show', $leader) }}" class="block truncate text-lg font-bold hover:text-brand-200">{{ $leader->name }}</a>
                                 <p class="num mt-1 text-sm text-fg-muted" dir="ltr">{{ $leader->phone }}</p>
                                 @if ($leader->email)<p class="truncate text-sm text-fg-muted" dir="ltr">{{ $leader->email }}</p>@endif
+                                @if ($leader->team)
+                                    <div class="mt-1"><span class="chip border-brand-500/25 bg-brand-500/[0.08] text-brand-300 text-[0.7rem] px-1.5 py-0.5 inline-flex items-center gap-1"><x-icon name="users" class="size-3" />{{ $leader->team }}</span></div>
+                                @endif
                                 <p class="mt-1 text-xs text-fg-subtle">{{ __('Requested :when', ['when' => $leader->created_at->diffForHumans()]) }} · <span class="num" dir="ltr">{{ $leader->unique_code }}</span></p>
                             </div>
                         </div>
@@ -94,6 +97,9 @@
                                         <div class="min-w-0">
                                             <a href="{{ route('admin.leaders.show', $leader) }}" class="font-semibold hover:text-brand-200">{{ $leader->name }}</a>
                                             <div class="num text-xs text-fg-subtle" dir="ltr">{{ $leader->phone }}</div>
+                                            @if ($leader->team)
+                                                <div class="mt-0.5"><span class="chip border-brand-500/25 bg-brand-500/[0.08] text-brand-300 text-[0.7rem] px-1.5 py-0.5 inline-flex items-center gap-1"><x-icon name="users" class="size-3" />{{ $leader->team }}</span></div>
+                                            @endif
                                         </div>
                                     </div>
                                 </td>

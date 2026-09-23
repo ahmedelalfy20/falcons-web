@@ -51,6 +51,7 @@ class LeaderService
                 'phone' => trim($data['phone']),
                 'phone_normalized' => $phone,
                 'email' => isset($data['email']) ? strtolower($data['email']) : null,
+                'team' => $data['team'] ?? null,
                 'photo' => $data['photo'] ?? null,
                 'unique_code' => $this->codes->code(),
                 'qr_token' => $this->codes->qrToken(),
@@ -62,7 +63,7 @@ class LeaderService
             if ($round = $competition->currentRound()) {
                 $this->scores->recalculate($round->id, $leader->id);
             }
-            $this->audit->log('leader.created', $leader, ['code' => $leader->unique_code, 'self_registered' => $actor === null, 'status' => $leader->status], $actor ?? $user);
+            $this->audit->log('leader.created', $leader, ['code' => $leader->unique_code, 'team' => $leader->team, 'self_registered' => $actor === null, 'status' => $leader->status], $actor ?? $user);
             $this->bumpLive($leader);
 
             return $leader;
@@ -77,13 +78,14 @@ class LeaderService
             if ($clash) {
                 throw BusinessRuleException::make('leader_exists');
             }
-            $before = $leader->only(['name', 'phone', 'email', 'status']);
+            $before = $leader->only(['name', 'phone', 'email', 'team', 'status']);
             $status = $data['status'] ?? $leader->status;
             $leader->fill([
                 'name' => trim($data['name']),
                 'phone' => trim($data['phone']),
                 'phone_normalized' => $phone,
                 'email' => $data['email'] ?? null,
+                'team' => array_key_exists('team', $data) ? $data['team'] : $leader->team,
                 'status' => $status,
             ]);
             if (array_key_exists('photo', $data)) {
@@ -96,7 +98,7 @@ class LeaderService
             $leader->save();
             $leader->user?->update(['name' => $leader->name, 'is_active' => $this->canLogIn($leader)]);
             $this->bumpLive($leader);
-            $this->audit->log('leader.updated', $leader, ['before' => $before, 'after' => $leader->only(['name', 'phone', 'email', 'status'])], $actor);
+            $this->audit->log('leader.updated', $leader, ['before' => $before, 'after' => $leader->only(['name', 'phone', 'email', 'team', 'status'])], $actor);
 
             return $leader;
         });

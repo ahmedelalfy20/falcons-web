@@ -170,6 +170,7 @@ class LeaderController extends Controller
                 }
             }],
             'email' => [$request->boolean('create_account') ? 'required' : 'nullable', 'email:rfc', 'max:190', $leader ? null : 'unique:users,email'],
+            'team' => ['nullable', 'string', \Illuminate\Validation\Rule::in(['Million Team', '3AQRAB', 'Mega Team'])],
             'status' => ['required', 'in:'.implode(',', Leader::STATUSES)],
             'photo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:8192'],
             'remove_photo' => ['sometimes', 'boolean'],
