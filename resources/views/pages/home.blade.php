@@ -1,0 +1,12 @@
+<x-layouts.site>
+    @include('partials.home.founder-hero')
+    @include('partials.home.stats')
+    @include('partials.home.vision')
+    @include('partials.home.about')
+    @include('partials.home.scanners')
+    @include('partials.home.leaders')
+    @include('partials.home.courses')
+    @include('partials.home.competition-teaser')
+    @include('partials.home.companies')
+    @include('partials.home.join')
+</x-layouts.site>
