@@ -33,10 +33,21 @@ class Seo
         return __('Falcons Academy');
     }
 
-    /** Absolute URL for an image path or URL. */
+    /** Founder share images (1200×630 card for social previews, 1200×1200 for search thumbnails). */
+    public const SHARE_CARD = 'media/share/founder-og.jpg';
+
+    public const SHARE_SQUARE = 'media/share/founder-square.jpg';
+
+    /** Absolute URL for an image path or URL (the founder share card by default). */
     public static function image(?string $path): string
     {
-        return media($path ?: 'media/founder-original.webp');
+        return media($path ?: self::SHARE_CARD);
+    }
+
+    /** Main image for search results: the page's own image, else the founder portrait. */
+    public static function primaryImage(?string $path): string
+    {
+        return media($path ?: self::SHARE_SQUARE);
     }
 
     /** sameAs links from the social settings (Telegram, Facebook, Instagram, ...). */
@@ -58,7 +69,7 @@ class Seo
                 'alternateName' => ['Falcons Organization', 'أكاديمية فالكونز', 'منظمة فالكونز'],
                 'url' => $home,
                 'logo' => ['@type' => 'ImageObject', 'url' => asset('media/brand/logo.webp')],
-                'image' => self::image(null),
+                'image' => self::primaryImage(null),
                 'description' => __('Falcons Academy — elite trading education, mentorship and a community of professional traders across the MENA region.'),
                 'founder' => ['@type' => 'Person', 'name' => 'Mahmoud Magdy'],
                 'areaServed' => ['@type' => 'Place', 'name' => 'Middle East and North Africa'],

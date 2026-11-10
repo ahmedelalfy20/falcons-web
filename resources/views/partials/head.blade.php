@@ -19,6 +19,7 @@
     $seoTitle = isset($title) && $title ? $title.' · '.$seoBrand : $seoBrand.' — '.__('Professional Trading Education & Mentorship');
     $seoDesc = \Illuminate\Support\Str::limit(trim(preg_replace('/\s+/', ' ', strip_tags((string) ($description ?? '')))) ?: __('Falcons Academy — elite trading education, mentorship and a community of professional traders across the MENA region.'), 158, '…');
     $seoImage = \App\Support\Seo::image($image ?? null);
+    $seoPrimary = \App\Support\Seo::primaryImage($image ?? null);
     $seoLocale = app()->getLocale();
     $seoNoindex = $noindex ?? false;
 @endphp
@@ -40,7 +41,12 @@
 <meta property="og:description" content="{{ $seoDesc }}">
 <meta property="og:url" content="{{ \App\Support\Seo::url($seoLocale) }}">
 <meta property="og:image" content="{{ $seoImage }}">
-<meta property="og:image:alt" content="{{ $title ?? $seoBrand }}">
+@empty($image)
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:type" content="image/jpeg">
+@endempty
+<meta property="og:image:alt" content="{{ empty($image) ? __('Mahmoud Magdy, founder of Falcons Academy') : ($title ?? $seoBrand) }}">
 <meta property="og:locale" content="{{ \App\Support\Seo::LOCALES[$seoLocale] ?? 'en_US' }}">
 @foreach (\App\Support\Seo::LOCALES as $code => $ogLocale)
     @if ($code !== $seoLocale)<meta property="og:locale:alternate" content="{{ $ogLocale }}">@endif
@@ -52,7 +58,7 @@
 <meta name="application-name" content="{{ $seoBrand }}">
 <meta name="format-detection" content="telephone=no">
 @unless ($seoNoindex)
-    <script type="application/ld+json">{!! \App\Support\Seo::jsonLd(array_merge([\App\Support\Seo::webPage($seoTitle, $seoDesc, $seoImage)], $schema ?? [])) !!}</script>
+    <script type="application/ld+json">{!! \App\Support\Seo::jsonLd(array_merge([\App\Support\Seo::webPage($seoTitle, $seoDesc, $seoPrimary)], $schema ?? [])) !!}</script>
 @endunless
 <link rel="icon" href="{{ asset('favicon.ico') }}" sizes="any">
 <link rel="apple-touch-icon" href="{{ asset('apple-touch-icon.png') }}">
