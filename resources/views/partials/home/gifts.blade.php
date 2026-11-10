@@ -53,7 +53,7 @@
                                      x-transition:enter="transition duration-700 ease-out" x-transition:enter-start="opacity-0 scale-95"
                                      @class(['gift-product absolute object-contain object-bottom transition-transform duration-700 ease-[var(--ease-out-soft)] group-hover:-translate-y-2 group-hover:scale-105', 'inset-x-[12%] bottom-[10%] top-[16%] h-[74%] w-[76%]' => ! $wide, 'inset-x-[8%] bottom-[9%] top-[20%] h-[71%] w-[84%]' => $wide])>
                             @endforeach
-                            <span class="absolute start-3 top-3 inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.07] px-2.5 py-1 text-[0.7rem] font-medium text-fg-muted backdrop-blur">
+                            <span class="absolute start-3 top-3 inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-black/40 px-2.5 py-1 text-[0.7rem] font-medium text-fg backdrop-blur">
                                 <x-icon :name="$open ? 'check' : ($total !== null ? 'lock' : 'gift')" class="size-3" />{{ __('Level :n', ['n' => $loop->iteration]) }}
                             </span>
                             @if ($opts->count() > 1)

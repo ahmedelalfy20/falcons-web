@@ -42,7 +42,7 @@
                     @if ($o->isPhoto())
                         <div class="absolute inset-0" x-show="view === {{ $i }}" @if ($i !== $startIndex) x-cloak @endif x-transition:enter="transition duration-500 ease-out" x-transition:enter-start="opacity-0">
                             <img src="{{ $o->imageUrl() }}" alt="{{ $o->tr('label') ?: $gift->tr('name') }}" loading="lazy" decoding="async"
-                                 class="h-full w-full object-cover transition-transform duration-[1.2s] ease-[var(--ease-out-soft)] group-hover:scale-[1.05]">
+                                 class="h-full w-full object-cover object-left transition-transform duration-[1.2s] rtl:object-[78%_50%] ease-[var(--ease-out-soft)] group-hover:scale-[1.05]">
                             <span class="gift-photo-shade absolute inset-0" aria-hidden="true"></span>
                         </div>
                     @endif
@@ -62,7 +62,7 @@
 
                 {{-- Copy --}}
                 <div class="relative flex h-full max-w-[56%] flex-col justify-between p-5 sm:p-6">
-                    <span class="inline-flex w-fit items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.06] px-3 py-1 text-xs font-medium text-fg-muted backdrop-blur">
+                    <span class="inline-flex w-fit items-center gap-1.5 rounded-full border border-white/10 bg-black/40 px-3 py-1 text-xs font-medium text-fg backdrop-blur">
                         @if ($unlocked)<x-icon name="check" class="size-3.5 text-brand-300" />@elseif ($locked)<x-icon name="lock" class="size-3.5" />@else<x-icon name="gift" class="size-3.5" />@endif
                         {{ __('Level :n', ['n' => $loop->iteration]) }}
                     </span>
