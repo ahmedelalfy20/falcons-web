@@ -17,6 +17,7 @@
             ['route' => 'admin.leaders.index', 'match' => 'admin.leaders.*', 'icon' => 'users', 'label' => __('Leaders'), 'show' => $u->hasPermission(Permission::LeadersView), 'badge' => $pendingLeaders],
             ['route' => 'admin.leaderboard', 'match' => 'admin.leaderboard', 'icon' => 'trophy', 'label' => __('Leaderboard'), 'show' => $u->hasPermission(Permission::LeaderboardView)],
             ['route' => 'admin.competition.index', 'match' => ['admin.competition*', 'admin.rounds.*'], 'icon' => 'timer', 'label' => __('Rounds & timer'), 'show' => true],
+            ['route' => 'admin.gifts.index', 'match' => 'admin.gifts.*', 'icon' => 'gift', 'label' => __('Gifts'), 'show' => $u->can('manage-competitions'), 'badge' => $u->can('manage-competitions') ? \App\Models\GiftClaim::where('status', 'requested')->count() : 0],
         ],
         __('Website') => [
             ['route' => 'admin.scanners.index', 'match' => 'admin.scanners.*', 'icon' => 'scan', 'label' => __('Scanners'), 'show' => $u->hasPermission(Permission::ContentManage)],

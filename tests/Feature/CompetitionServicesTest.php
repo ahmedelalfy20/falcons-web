@@ -284,7 +284,7 @@ class CompetitionServicesTest extends TestCase
         $this->assertSame(RoundStatus::Finished, $round1->fresh()->status);
         $board1 = app(ScoreService::class)->leaderboard($round1->fresh());
         $board2 = app(ScoreService::class)->leaderboard($round2);
-        $this->assertSame([3, 1], $board1->pluck('score')->all());
+        $this->assertSame([30, 10], $board1->pluck('score')->all());
         $this->assertSame([0, 0], $board2->pluck('score')->all());
 
         // With round-scoped duplicates the same participant may join the new round.

@@ -4,7 +4,7 @@
         @if (session('error')) add({ type: 'error', text: @js(session('error')) }); @endif
      "
      @toast.window="add($event.detail)"
-     class="pointer-events-none fixed inset-x-0 bottom-4 z-[100] flex flex-col items-center gap-2 px-4 sm:bottom-6"
+     class="theme-dark pointer-events-none fixed inset-x-0 bottom-4 z-[100] flex flex-col items-center gap-2 px-4 sm:bottom-6"
      aria-live="polite" role="status">
     <template x-for="t in toasts" :key="t.id">
         <div x-transition:enter="transition duration-300 ease-out" x-transition:enter-start="opacity-0 translate-y-2" x-transition:leave="transition duration-200 ease-in" x-transition:leave-end="opacity-0"

@@ -85,6 +85,7 @@ class CompetitionController extends Controller
             'status' => ['required', 'in:draft,active,archived'],
             'duplicate_scope' => ['required', 'in:round,competition'],
             'default_round_minutes' => ['required', 'integer', 'min:1', 'max:43200'],
+            'points_per_registration' => ['required', 'integer', 'min:1', 'max:1000'],
             'require_email' => ['sometimes', 'boolean'],
             'require_transfer_proof' => ['sometimes', 'boolean'],
             'collect_city' => ['sometimes', 'boolean'],
@@ -100,6 +101,7 @@ class CompetitionController extends Controller
             'configuration' => [
                 'duplicate_scope' => $v['duplicate_scope'],
                 'default_round_minutes' => (int) $v['default_round_minutes'],
+                'points_per_registration' => (int) $v['points_per_registration'],
                 'require_email' => $request->boolean('require_email'),
                 'require_transfer_proof' => $request->boolean('require_transfer_proof'),
                 'collect_city' => $request->boolean('collect_city'),

@@ -47,7 +47,7 @@
                     ['icon' => 'qr', 'title' => __('Leader shares a QR'), 'text' => __('Every leader gets a unique code and QR.')],
                     ['icon' => 'user', 'title' => __('Participant registers'), 'text' => __('Scan, fill a short form, submit.')],
                     ['icon' => 'shield-check', 'title' => __('Team reviews'), 'text' => __('Each registration is checked by our team.')],
-                    ['icon' => 'trophy', 'title' => __('Approved = 1 point'), 'text' => __('The leaderboard updates automatically.')],
+                    ['icon' => 'trophy', 'title' => __('Approved = :n points', ['n' => $competition->pointsPerRegistration()]), 'text' => __('Points add up to unlock gifts.')],
                 ] as $step)
                     <li class="flex gap-4 py-6 sm:px-4 lg:py-8">
                         <span class="num text-sm font-semibold text-fg-subtle">{{ str_pad($loop->iteration, 2, '0', STR_PAD_LEFT) }}</span>
@@ -118,12 +118,31 @@
                             </template>
                         </ol>
                     </div>
-                    <p class="mt-6 text-xs text-fg-subtle">{{ __('Ranking: approved registrations first; on a tie, the leader who reached the score earlier ranks higher.') }}</p>
+                    <p class="mt-6 text-xs text-fg-subtle">{{ __('Ranking: most points first; on a tie, the leader who reached the score earlier ranks higher.') }}</p>
                 </div>
             </section>
         @else
             <div x-data="poller(@js(route('live.competition')), 15000)"></div>
             <div class="h-16"></div>
+        @endif
+
+        @if ($gifts->isNotEmpty())
+            <section id="gifts" class="relative overflow-hidden border-t border-line py-16 sm:py-20" aria-labelledby="gifts-title">
+                <div class="bg-glow pointer-events-none absolute inset-0 opacity-60" aria-hidden="true"></div>
+                <div class="container-x relative">
+                    <div class="flex flex-wrap items-end justify-between gap-6">
+                        <div class="max-w-2xl">
+                            <p class="eyebrow">{{ __('Leader rewards') }}</p>
+                            <h2 id="gifts-title" class="h-section mt-3">{{ __('Collect points, unlock gifts') }}</h2>
+                            <p class="lead mt-4">{{ __('Every approved registration earns :n points. Points never reset — each gift you unlock keeps them, and they carry you to the next one.', ['n' => $competition->pointsPerRegistration()]) }}</p>
+                        </div>
+                        @guest
+                            <a href="{{ route('leader.signup') }}" class="btn btn-outline">{{ __('Become a leader') }} <x-icon name="arrow-right" class="size-4" /></a>
+                        @endguest
+                    </div>
+                    <div class="mt-10">@include('competition.partials.gift-ladder', ['gifts' => $gifts])</div>
+                </div>
+            </section>
         @endif
     @endif
 </x-layouts.site>

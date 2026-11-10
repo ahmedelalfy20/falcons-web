@@ -4,7 +4,7 @@
     $initial = [
         'counts' => $counts,
         'alerts' => $alerts,
-        'leaderboard' => $leaderboard?->map(fn ($r) => ['rank' => $r->rank, 'name' => $r->name, 'photo' => $r->photoUrl(), 'initials' => $r->initials(), 'code' => $r->unique_code, 'accepted' => (int) $r->accepted, 'pending' => (int) $r->pending])->values(),
+        'leaderboard' => $leaderboard?->map(fn ($r) => ['rank' => $r->rank, 'name' => $r->name, 'photo' => $r->photoUrl(), 'initials' => $r->initials(), 'code' => $r->unique_code, 'accepted' => (int) $r->accepted, 'points' => (int) $r->score, 'pending' => (int) $r->pending])->values(),
         'recent' => $recent?->map(fn ($r) => [
             'id' => $r->id, 'name' => $r->full_name, 'leader' => $r->leader?->name, 'status' => $r->status->value,
             'status_label' => $r->status->label(), 'ago' => $r->created_at->diffForHumans(), 'url' => route('admin.registrations.show', $r),
@@ -92,7 +92,7 @@
                                 <span class="num flex size-8 shrink-0 items-center justify-center rounded-full text-sm font-bold" :class="row.rank === 1 ? 'bg-brand-500 text-ink-950' : 'bg-white/[0.06] text-fg-muted'" x-text="row.rank"></span>
                                 <x-avatar-live class="size-10 text-sm" />
                                 <span class="min-w-0 flex-1"><span class="block truncate font-semibold" x-text="row.name"></span><span class="num block text-xs text-fg-subtle" dir="ltr" x-text="row.code"></span></span>
-                                <span class="text-end"><span class="num block text-lg font-extrabold" x-text="row.accepted"></span><span class="block text-xs text-warning" x-show="row.pending > 0" x-text="row.pending + ' ' + @js(__('pending'))"></span></span>
+                                <span class="text-end"><span class="num block text-lg font-extrabold" x-text="row.points"></span><span class="block text-xs text-warning" x-show="row.pending > 0" x-text="row.pending + ' ' + @js(__('pending'))"></span></span>
                             </li>
                         </template>
                     </ol>

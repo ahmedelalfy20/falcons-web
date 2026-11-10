@@ -42,7 +42,7 @@ class DashboardController extends Controller
             'v' => $version,
             'round' => $s['round'] ? RoundPayload::make($s['round']) : null,
             'counts' => $s['counts'],
-            'leaderboard' => $s['leaderboard']?->map(fn ($r) => ['rank' => $r->rank, 'name' => $r->name, 'photo' => $r->photoUrl(), 'initials' => $r->initials(), 'code' => $r->unique_code, 'accepted' => (int) $r->accepted, 'pending' => (int) $r->pending]),
+            'leaderboard' => $s['leaderboard']?->map(fn ($r) => ['rank' => $r->rank, 'name' => $r->name, 'photo' => $r->photoUrl(), 'initials' => $r->initials(), 'code' => $r->unique_code, 'accepted' => (int) $r->accepted, 'points' => (int) $r->score, 'pending' => (int) $r->pending]),
             'recent' => $s['recent']?->map(fn ($r) => [
                 'id' => $r->id, 'name' => $r->full_name, 'leader' => $r->leader?->name, 'status' => $r->status->value,
                 'status_label' => $r->status->label(), 'ago' => $r->created_at->diffForHumans(), 'url' => route('admin.registrations.show', $r),

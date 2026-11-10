@@ -35,7 +35,10 @@
                     @endforeach
                 </div>
             </div>
-            <x-field name="default_round_minutes" type="number" :label="__('Default round length (minutes)')" :value="$cfg['default_round_minutes']" min="1" max="43200" required class="max-w-xs" />
+            <div class="grid gap-5 sm:grid-cols-2">
+                <x-field name="default_round_minutes" type="number" :label="__('Default round length (minutes)')" :value="$cfg['default_round_minutes']" min="1" max="43200" required />
+                <x-field name="points_per_registration" type="number" :label="__('Points per approved registration')" :value="$cfg['points_per_registration']" min="1" max="1000" required :hint="__('Gifts unlock when a leader’s total points reach their target.')" />
+            </div>
             <div class="grid gap-3 sm:grid-cols-2">
                 <x-toggle name="require_email" :label="__('Require participant email')" :checked="$cfg['require_email']" />
                 <x-toggle name="require_transfer_proof" :label="__('Require transfer screenshot')" :checked="$cfg['require_transfer_proof'] ?? true" :hint="__('Participants must upload a screenshot of their payment transfer.')" />

@@ -1,4 +1,4 @@
-<x-layouts.admin :heading="__('Leaderboard')" :subheading="__('Ranked by accepted registrations; ties go to the leader who reached the score first.')">
+<x-layouts.admin :heading="__('Leaderboard')" :subheading="__('Ranked by points (each accepted registration is worth the same); ties go to the leader who reached the score first.')">
     <x-slot:actions>
         @if ($rounds->count() > 1)
             <form method="GET">

@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Leader;
 
 use App\Http\Controllers\Controller;
+use App\Models\Gift;
 use App\Models\Registration;
+use App\Services\GiftService;
 use App\Services\ImageOptimizer;
 use App\Services\LeaderService;
 use App\Services\QrCodeService;
@@ -15,7 +17,7 @@ use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
-    public function __construct(private RoundService $rounds, private ScoreService $scores) {}
+    public function __construct(private RoundService $rounds, private ScoreService $scores, private GiftService $gifts) {}
 
     public function index(Request $request)
     {
@@ -29,6 +31,8 @@ class DashboardController extends Controller
             'stats' => $round ? $this->scores->rankOf($round, $leader->id) : null,
             'totalLeaders' => $leader->competition->leaders()->whereNotIn('status', ['pending', 'rejected'])->count(),
             'recent' => $round ? Registration::where('leader_id', $leader->id)->where('round_id', $round->id)->latest()->limit(8)->get(['id', 'full_name', 'status', 'created_at']) : collect(),
+            'gifts' => $this->gifts->progressFor($leader),
+            'perRegistration' => $leader->competition->pointsPerRegistration(),
             'history' => $leader->competition->rounds()->where('status', 'finished')->get()->map(fn ($r) => ['round' => $r, 'row' => $this->scores->rankOf($r, $leader->id)]),
         ]);
     }
@@ -47,10 +51,19 @@ class DashboardController extends Controller
             'round' => RoundPayload::make($round),
             'leader_status' => $leader->status,
             'stats' => [
-                'rank' => $row?->rank, 'accepted' => (int) ($row?->accepted ?? 0),
+                'rank' => $row?->rank, 'accepted' => (int) ($row?->accepted ?? 0), 'points' => (int) ($row?->score ?? 0),
+                'total' => $this->scores->totalPoints($leader),
                 'pending' => (int) ($row?->pending ?? 0), 'rejected' => (int) ($row?->rejected ?? 0),
             ],
         ])->header('Cache-Control', 'no-store');
+    }
+
+    public function claimGift(Request $request, Gift $gift)
+    {
+        $request->validate(['option' => ['nullable', 'integer']]);
+        $this->gifts->choose($request->user()->leader, $gift, $request->integer('option') ?: null);
+
+        return redirect()->to(route('leader.dashboard').'#gifts')->with('success', __('Done! The Falcons team will contact you to deliver your gift.'));
     }
 
     public function photo(Request $request, ImageOptimizer $images, LeaderService $leaders)

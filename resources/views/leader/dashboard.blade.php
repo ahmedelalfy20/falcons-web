@@ -2,6 +2,8 @@
     $s = [
         'rank' => $stats?->rank,
         'accepted' => (int) ($stats?->accepted ?? 0),
+        'points' => (int) ($stats?->score ?? 0),
+        'total' => $gifts['total'],
         'pending' => (int) ($stats?->pending ?? 0),
         'rejected' => (int) ($stats?->rejected ?? 0),
     ];
@@ -84,8 +86,8 @@
                             <div class="flex flex-wrap items-start justify-between gap-6">
                                 <div>
                                     <p class="text-sm text-fg-muted">{{ $round->displayName() }} · {{ __('Your score') }}</p>
-                                    <p class="num mt-2 text-6xl font-extrabold tracking-tight" x-text="s.accepted">{{ $s['accepted'] }}</p>
-                                    <p class="mt-1 text-sm text-fg-subtle">{{ __('approved registrations') }}</p>
+                                    <p class="num mt-2 text-6xl font-extrabold tracking-tight"><span x-text="s.points">{{ $s['points'] }}</span> <span class="text-lg font-semibold text-fg-subtle">{{ __('points') }}</span></p>
+                                    <p class="mt-1 text-sm text-fg-subtle"><span class="num" x-text="s.accepted">{{ $s['accepted'] }}</span> {{ __('approved registrations') }} · {{ __(':n points each', ['n' => $perRegistration]) }}</p>
                                 </div>
                                 <div class="text-end">
                                     <p class="text-sm text-fg-muted">{{ __('Rank') }}</p>
@@ -106,6 +108,10 @@
                     @endif
                 </section>
             </div>
+
+            @if ($gifts['gifts']->isNotEmpty())
+                @include('leader.partials.gifts', ['g' => $gifts])
+            @endif
 
             <div class="mt-5 grid gap-5 lg:grid-cols-12">
                 <section class="card lg:col-span-7" aria-labelledby="recent-title">
@@ -135,7 +141,7 @@
                                 <p class="text-xs text-fg-subtle">{{ $h['round']->finished_at?->translatedFormat('j M Y') }}</p>
                             </div>
                             <div class="text-end">
-                                <p class="num font-bold">{{ (int) ($h['row']?->accepted ?? 0) }} <span class="text-xs font-normal text-fg-subtle">{{ __('points') }}</span></p>
+                                <p class="num font-bold">{{ (int) ($h['row']?->score ?? 0) }} <span class="text-xs font-normal text-fg-subtle">{{ __('points') }}</span></p>
                                 <p class="num text-xs text-fg-subtle">{{ __('Rank') }} #{{ $h['row']?->rank ?? '—' }}</p>
                             </div>
                         </div>

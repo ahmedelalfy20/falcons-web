@@ -61,6 +61,7 @@ Route::prefix('live')->middleware('throttle:live')->name('live.')->group(functio
 Route::middleware(['auth', 'leader'])->prefix('leader')->name('leader.')->group(function () {
     Route::get('/', [Leader\DashboardController::class, 'index'])->name('dashboard');
     Route::get('/live', [Leader\DashboardController::class, 'live'])->middleware('throttle:live')->name('live');
+    Route::post('/gifts/{gift}/claim', [Leader\DashboardController::class, 'claimGift'])->middleware('throttle:20,1')->name('gifts.claim');
     Route::post('/photo', [Leader\DashboardController::class, 'photo'])->middleware('throttle:10,1')->name('photo');
     Route::get('/qr.svg', [Leader\DashboardController::class, 'qrSvg'])->name('qr.svg');
     Route::get('/qr.png', [Leader\DashboardController::class, 'qrPng'])->name('qr.png');
@@ -106,6 +107,10 @@ Route::middleware(['auth', 'can:access-admin'])->prefix('admin')->name('admin.')
     Route::post('/rounds/{round}/adjust', [Admin\RoundController::class, 'adjust'])->name('rounds.adjust');
     Route::post('/rounds/{round}/registration', [Admin\RoundController::class, 'registration'])->name('rounds.registration');
     Route::post('/rounds/{round}/recalculate', [Admin\RoundController::class, 'recalculate'])->name('rounds.recalculate');
+
+    // Gift ladder
+    Route::resource('gifts', Admin\GiftController::class)->except(['show']);
+    Route::post('/gift-claims/{claim}/deliver', [Admin\GiftController::class, 'deliver'])->name('gifts.deliver');
 
     // Audit trail (read-only by design)
     Route::get('/audit-logs', [Admin\AuditLogController::class, 'index'])->name('audit.index');

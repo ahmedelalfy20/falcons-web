@@ -40,6 +40,11 @@ class Leader extends Model
         return $this->hasMany(LeaderScore::class);
     }
 
+    public function giftClaims(): HasMany
+    {
+        return $this->hasMany(GiftClaim::class);
+    }
+
     public function isActive(): bool
     {
         return $this->status === 'active';

@@ -25,6 +25,8 @@ class Competition extends Model
         'leader_auto_approve' => false,
         'public_leaderboard' => true,
         'default_round_minutes' => 1440,
+        // Points awarded for every approved registration.
+        'points_per_registration' => 10,
     ];
 
     protected $fillable = ['name', 'name_ar', 'status', 'configuration'];
@@ -60,6 +62,11 @@ class Competition extends Model
     public function fullConfig(): array
     {
         return array_merge(self::DEFAULT_CONFIG, $this->configuration ?? []);
+    }
+
+    public function pointsPerRegistration(): int
+    {
+        return max(1, (int) $this->config('points_per_registration'));
     }
 
     public function isActive(): bool

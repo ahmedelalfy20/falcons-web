@@ -56,18 +56,19 @@
                 <h2 id="rounds-title" class="border-b border-line px-5 py-4 font-bold">{{ __('Results by round') }}</h2>
                 <div class="overflow-x-auto">
                     <table class="table !min-w-[520px]">
-                        <thead><tr><th>{{ __('Round') }}</th><th class="!text-end">{{ __('Rank') }}</th><th class="!text-end">{{ __('Accepted') }}</th><th class="!text-end">{{ __('Pending') }}</th><th class="!text-end">{{ __('Rejected') }}</th></tr></thead>
+                        <thead><tr><th>{{ __('Round') }}</th><th class="!text-end">{{ __('Rank') }}</th><th class="!text-end">{{ __('Points') }}</th><th class="!text-end">{{ __('Accepted') }}</th><th class="!text-end">{{ __('Pending') }}</th><th class="!text-end">{{ __('Rejected') }}</th></tr></thead>
                         <tbody>
                             @forelse ($perRound->reverse() as $p)
                                 <tr>
                                     <td><span class="font-medium">{{ $p['round']->displayName() }}</span> <span class="badge badge-{{ $p['round']->status->value }} ms-1">{{ $p['round']->status->label() }}</span></td>
                                     <td class="num text-end">#{{ $p['row']?->rank ?? '—' }}</td>
-                                    <td class="num text-end font-bold">{{ (int) ($p['row']?->accepted ?? 0) }}</td>
+                                    <td class="num text-end font-bold">{{ (int) ($p['row']?->score ?? 0) }}</td>
+                                    <td class="num text-end">{{ (int) ($p['row']?->accepted ?? 0) }}</td>
                                     <td class="num text-end text-warning">{{ (int) ($p['row']?->pending ?? 0) }}</td>
                                     <td class="num text-end text-fg-muted">{{ (int) ($p['row']?->rejected ?? 0) }}</td>
                                 </tr>
                             @empty
-                                <tr><td colspan="5"><x-empty icon="timer" :title="__('No rounds yet')" /></td></tr>
+                                <tr><td colspan="6"><x-empty icon="timer" :title="__('No rounds yet')" /></td></tr>
                             @endforelse
                         </tbody>
                     </table>

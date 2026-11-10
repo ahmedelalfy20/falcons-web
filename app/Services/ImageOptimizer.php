@@ -118,6 +118,7 @@ class ImageOptimizer
             Storage::disk('local')->delete(str_replace('.webp', '-thumb.webp', $path));
         } elseif (str_starts_with($path, 'storage/')) {
             Storage::disk('public')->delete(substr($path, 8));
+            Storage::disk('public')->delete(str_replace('.webp', '-thumb.webp', substr($path, 8)));
         }
     }
 }

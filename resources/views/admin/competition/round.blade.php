@@ -22,13 +22,14 @@
     @if ($rows->isNotEmpty())
         <div class="table-wrap mt-5">
             <table class="table">
-                <thead><tr><th class="w-16">{{ __('Rank') }}</th><th>{{ __('Leader') }}</th><th class="!text-end">{{ __('Accepted') }}</th><th class="!text-end">{{ __('Pending') }}</th><th class="!text-end">{{ __('Rejected') }}</th></tr></thead>
+                <thead><tr><th class="w-16">{{ __('Rank') }}</th><th>{{ __('Leader') }}</th><th class="!text-end">{{ __('Points') }}</th><th class="!text-end">{{ __('Accepted') }}</th><th class="!text-end">{{ __('Pending') }}</th><th class="!text-end">{{ __('Rejected') }}</th></tr></thead>
                 <tbody>
                     @foreach ($rows as $row)
                         <tr>
                             <td class="num font-bold {{ $row->rank <= 3 ? 'text-brand-300' : 'text-fg-subtle' }}">#{{ $row->rank }}</td>
                             <td class="font-semibold">{{ $row->name }} <span class="num ms-1 text-xs font-normal text-fg-subtle" dir="ltr">{{ $row->unique_code }}</span></td>
-                            <td class="num text-end text-lg font-extrabold">{{ $row->accepted }}</td>
+                            <td class="num text-end text-lg font-extrabold">{{ $row->score }}</td>
+                            <td class="num text-end">{{ $row->accepted }}</td>
                             <td class="num text-end text-warning">{{ $row->pending }}</td>
                             <td class="num text-end text-fg-muted">{{ $row->rejected }}</td>
                         </tr>

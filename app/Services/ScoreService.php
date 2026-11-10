@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Enums\RegistrationStatus;
+use App\Models\Competition;
 use App\Models\Leader;
 use App\Models\LeaderScore;
 use App\Models\Registration;
@@ -12,12 +13,15 @@ use Illuminate\Support\Facades\DB;
 
 /**
  * Scores are ALWAYS derived from registrations:
- *   score = COUNT(accepted registrations for the leader in the round)
+ *   score = COUNT(accepted registrations for the leader in the round) × points per registration
  * leader_scores is only a cache; recalculate() rebuilds a row from source data
  * and is invoked inside the same transaction as every status change.
  */
 class ScoreService
 {
+    /** @var array<int, int> */
+    private array $pointsCache = [];
+
     public function recalculate(int $roundId, int $leaderId): LeaderScore
     {
         $counts = Registration::query()
@@ -92,15 +96,36 @@ class ScoreService
 
         $rows = $query->get();
         $rank = 0;
+        $per = $this->pointsFor($round->competition_id);
 
-        $ranked = $rows->map(function ($row) use (&$rank) {
+        $ranked = $rows->map(function ($row) use (&$rank, $per) {
             $row->rank = ++$rank;
-            $row->score = (int) $row->accepted;
+            $row->score = (int) $row->accepted * $per;
 
             return $row;
         });
 
         return $limit ? $ranked->take($limit)->values() : $ranked;
+    }
+
+    /** Points a single approved registration is worth in a competition. */
+    public function pointsFor(int $competitionId): int
+    {
+        return $this->pointsCache[$competitionId] ??= (Competition::find($competitionId)?->pointsPerRegistration() ?? 10);
+    }
+
+    /**
+     * Lifetime points of a leader across every round of their competition.
+     * These never reset — gifts unlock as the total climbs.
+     */
+    public function totalPoints(Leader $leader): int
+    {
+        $accepted = Registration::where('leader_id', $leader->id)
+            ->where('competition_id', $leader->competition_id)
+            ->where('status', RegistrationStatus::Accepted->value)
+            ->count();
+
+        return $accepted * $this->pointsFor($leader->competition_id);
     }
 
     public function rankOf(Round $round, int $leaderId): ?object
