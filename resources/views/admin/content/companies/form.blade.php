@@ -8,7 +8,7 @@
         @if ($editing) @method('PUT') @endif
         <section class="card card-pad space-y-5">
             <div class="flex flex-col gap-4 sm:flex-row sm:items-center">
-                <span class="flex h-28 w-full shrink-0 items-center justify-center rounded-2xl border border-line p-4 transition-colors sm:w-52" :class="light ? 'bg-white' : 'bg-ink-950'">
+                <span class="flex h-28 w-full shrink-0 items-center justify-center rounded-2xl border border-line p-4 transition-colors sm:w-52" :class="light ? 'bg-white' : 'theme-dark bg-ink-950'">
                     <template x-if="preview"><img :src="preview" alt="" class="max-h-full max-w-full object-contain"></template>
                     <template x-if="!preview"><x-icon name="image" class="size-8 text-fg-subtle" /></template>
                 </span>

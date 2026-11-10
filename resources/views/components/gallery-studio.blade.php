@@ -15,7 +15,7 @@
         'caption' => $img->tr('caption'),
     ]);
 @endphp
-<div x-data="studio(@js($items), {{ (int) $interval }})" {{ $attributes->class(['relative']) }}
+<div x-data="studio(@js($items), {{ (int) $interval }})" {{ $attributes->class(['theme-dark relative']) }}
      @keydown.arrow-right="dir() === 'rtl' ? prev() : next()" @keydown.arrow-left="dir() === 'rtl' ? next() : prev()">
 
     {{-- Stage --}}

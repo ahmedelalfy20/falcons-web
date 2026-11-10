@@ -12,7 +12,7 @@
                                 <img src="{{ media($member->image) }}" alt="{{ $member->tr('name') }}" loading="lazy" decoding="async" width="600" height="750"
                                      class="h-full w-full object-cover object-top transition-transform duration-500 ease-out group-hover:scale-[1.04]">
                             @endif
-                            <span class="absolute end-3 top-3 flex size-9 items-center justify-center rounded-full bg-ink-950/70 text-white opacity-0 backdrop-blur transition-opacity duration-300 group-hover:opacity-100 group-focus-visible:opacity-100" aria-hidden="true">
+                            <span class="theme-dark absolute end-3 top-3 flex size-9 items-center justify-center rounded-full bg-ink-950/70 text-white opacity-0 backdrop-blur transition-opacity duration-300 group-hover:opacity-100 group-focus-visible:opacity-100" aria-hidden="true">
                                 <x-icon name="arrow-up-right" class="size-4" />
                             </span>
                         </div>

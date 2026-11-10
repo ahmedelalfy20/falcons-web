@@ -33,7 +33,7 @@
                                         'rounded-2xl bg-white/95 px-6' => $c->on_light,
                                     ])>
                                     <img src="{{ media($c->logo) }}" alt="{{ $clone ? '' : $c->tr('name') }}" loading="lazy" decoding="async"
-                                         class="h-16 w-auto max-w-[200px] object-contain opacity-80 transition-opacity duration-300 group-hover:opacity-100 sm:h-20 sm:max-w-[240px]">
+                                         @class(['h-16 w-auto max-w-[200px] object-contain opacity-80 transition-opacity duration-300 group-hover:opacity-100 sm:h-20 sm:max-w-[240px]', 'logo-mono' => ! $c->on_light])>
                                 </{{ $tag }}>
                             </li>
                         @endforeach

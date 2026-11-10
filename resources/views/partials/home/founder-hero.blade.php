@@ -18,7 +18,7 @@
              class="hero-portrait absolute inset-x-0 bottom-0 mx-auto h-full w-full object-contain object-bottom [mask-image:linear-gradient(to_bottom,#000_72%,transparent_100%)]">
         {{-- Desktop caption --}}
         <div class="absolute inset-x-6 bottom-6 hidden items-end justify-between gap-4 lg:flex xl:inset-x-10 xl:bottom-10">
-            <div class="rounded-2xl border border-white/10 bg-ink-950/75 px-5 py-4 backdrop-blur-md">
+            <div class="theme-dark rounded-2xl border border-white/10 bg-ink-950/75 px-5 py-4 backdrop-blur-md">
                 <p class="text-lg font-bold text-white">{{ site('founder.name') }}</p>
                 <p class="mt-0.5 text-sm text-white/70">{{ site('founder.title') }}</p>
             </div>

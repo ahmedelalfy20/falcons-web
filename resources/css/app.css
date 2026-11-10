@@ -261,3 +261,100 @@
     .marquee-track { animation: none; width: auto; flex-wrap: wrap; justify-content: center; }
     .marquee-track [aria-hidden='true'] { display: none; }
 }
+
+/* ------------------------------------------------------------------
+ | Light mode — <html data-theme="light">.
+ | The whole UI is built on colour tokens, so light mode re-maps the
+ | tokens: ink-* become light surfaces, fg-* become dark text and the
+ | brand greens are deepened so they stay readable on white.
+ | Anything marked .theme-dark (photo overlays, lightbox, store badges)
+ | keeps the dark palette in both modes.
+ * ------------------------------------------------------------------ */
+:root[data-theme='light'] {
+    color-scheme: light;
+    --color-ink-950: #f7f6f2;
+    --color-ink-900: #efede7;
+    --color-ink-850: #ffffff;
+    --color-ink-800: #f3f1ec;
+    --color-ink-700: #e6e3dc;
+    --color-line: #e3e0d8;
+    --color-line-strong: #cfcbc1;
+
+    --color-fg: #101513;
+    --color-fg-muted: #4a524e;
+    --color-fg-subtle: #6f7772;
+
+    --color-brand-200: #0b5c3b;
+    --color-brand-300: #0d7049;
+    --color-brand-400: #128a5a;
+    --color-brand-500: #22c584;
+    --color-brand-600: #169a66;
+
+    --color-success: #138a55;
+    --color-warning: #a86b00;
+    --color-danger: #c53b3b;
+    --color-info: #2563c9;
+}
+:root[data-theme='light'] .theme-dark {
+    color-scheme: dark;
+    --color-ink-950: #080a09;
+    --color-ink-900: #0d100f;
+    --color-ink-850: #121614;
+    --color-ink-800: #181d1a;
+    --color-ink-700: #212824;
+    --color-line: #222925;
+    --color-line-strong: #313a35;
+    --color-fg: #f2f1ec;
+    --color-fg-muted: #a9afab;
+    --color-fg-subtle: #7a827d;
+    --color-brand-200: #b6f9d8;
+    --color-brand-300: #86f1bf;
+    --color-brand-400: #43dd9c;
+    --color-success: #34d399;
+    --color-warning: #f5c04e;
+    --color-danger: #f47a7a;
+    --color-info: #7db4ff;
+}
+
+/* Smooth switch between themes (not on first paint). */
+html.theme-transition, html.theme-transition *, html.theme-transition *::before, html.theme-transition *::after {
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.2s ease, fill 0.2s ease !important;
+}
+
+@layer utilities {
+    /* Text on brand / sand / white fills must stay dark in light mode too. */
+    :root[data-theme='light'] :is(.btn-primary, .bg-brand-400, .bg-brand-500, .bg-sand-200, .bg-sand-400, .bg-warning, .bg-white):where(.text-ink-950, .btn-primary),
+    :root[data-theme='light'] .btn-primary { color: #04140d; }
+    :root[data-theme='light'] .btn-light { color: #f7f6f2; }
+    :root[data-theme='light'] .btn-light:hover { background-color: #000; }
+    :root[data-theme='light'] ::selection { color: #04140d; }
+
+    /* White-tint hovers/fills become soft dark tints on light surfaces. */
+    :root[data-theme='light'] :is(.bg-white\/\[0\.02\], .bg-white\/\[0\.04\], .bg-white\/\[0\.05\]):not(.theme-dark, .theme-dark *) { background-color: rgb(16 21 19 / 0.04); }
+    :root[data-theme='light'] :is(.bg-white\/\[0\.06\], .bg-white\/\[0\.07\], .bg-white\/\[0\.08\], .bg-white\/10):not(.theme-dark, .theme-dark *) { background-color: rgb(16 21 19 / 0.07); }
+    :root[data-theme='light'] :is(.bg-white\/15, .bg-white\/20, .bg-white\/25):not(.theme-dark, .theme-dark *) { background-color: rgb(16 21 19 / 0.1); }
+    :root[data-theme='light'] :is(.hover\:bg-white\/\[0\.02\], .hover\:bg-white\/\[0\.04\], .hover\:bg-white\/\[0\.05\], .btn-outline, .btn-ghost):not(.theme-dark, .theme-dark *):hover { background-color: rgb(16 21 19 / 0.05); }
+    :root[data-theme='light'] :is(.hover\:bg-white\/20, .hover\:bg-white\/25, .file\:bg-white\/10):not(.theme-dark, .theme-dark *):hover { background-color: rgb(16 21 19 / 0.1); }
+    :root[data-theme='light'] :is(.border-white\/10, .border-white\/15, .border-white\/20, .border-white\/\[0\.04\]):not(.theme-dark, .theme-dark *) { border-color: var(--color-line); }
+    :root[data-theme='light'] :is(.ring-white\/5, .ring-white\/10, .ring-white\/15):not(.theme-dark, .theme-dark *) { --tw-ring-color: rgb(16 21 19 / 0.08); }
+    :root[data-theme='light'] input[type='file']:not(.theme-dark *)::file-selector-button { background-color: rgb(16 21 19 / 0.07); color: var(--color-fg); }
+
+    /* White-on-transparent company logos: render them dark on light surfaces. */
+    :root[data-theme='light'] .logo-mono:not(.theme-dark *) { filter: brightness(0); }
+    /* Warm sand quotes → deeper sand so they stay legible. */
+    :root[data-theme='light'] .text-sand-200:not(.theme-dark *) { color: #7a5a2b; }
+
+    /* Pale tinted alert text → deep tones. */
+    :root[data-theme='light'] :is(.text-amber-100, .text-amber-100\/90):not(.theme-dark *) { color: #7a4d00; }
+    :root[data-theme='light'] .text-red-100:not(.theme-dark *) { color: #9b2c2c; }
+    :root[data-theme='light'] .text-emerald-100:not(.theme-dark *) { color: #0b5c3b; }
+    :root[data-theme='light'] .text-blue-100:not(.theme-dark *) { color: #1e4f8a; }
+
+    /* Shadows read heavier on white — soften them. */
+    :root[data-theme='light'] .card { box-shadow: 0 1px 2px rgb(16 21 19 / 0.04); }
+    :root[data-theme='light'] .bg-glow {
+        background:
+            radial-gradient(60% 50% at 80% 10%, rgba(34, 197, 132, 0.14), transparent 70%),
+            radial-gradient(40% 40% at 5% 90%, rgba(205, 185, 148, 0.18), transparent 70%);
+    }
+}

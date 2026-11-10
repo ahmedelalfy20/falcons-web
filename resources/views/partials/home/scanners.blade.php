@@ -47,7 +47,7 @@
                                     <img src="{{ media($scanner->coverImage()) }}" alt="{{ __(':name scanner signal on a chart', ['name' => $scanner->name]) }}"
                                          loading="lazy" decoding="async" width="1600" height="1000" class="h-full w-full object-cover object-top transition-transform duration-700 ease-[var(--ease-out-soft)] group-hover:scale-[1.02]">
                                 @endif
-                                <span class="absolute start-4 top-4 flex items-center gap-2 rounded-full bg-ink-950/85 px-3 py-1.5 text-xs font-semibold text-white backdrop-blur">
+                                <span class="theme-dark absolute start-4 top-4 flex items-center gap-2 rounded-full bg-ink-950/85 px-3 py-1.5 text-xs font-semibold text-white backdrop-blur">
                                     <span class="size-2 rounded-full" style="background: var(--accent)"></span>{{ $scanner->tr('name') }}
                                 </span>
                             </div>

@@ -32,7 +32,8 @@
             @endforeach
         </nav>
 
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-1 sm:gap-2">
+            <x-theme-toggle />
             <a href="{{ route('locale', $otherLocale) }}" class="btn btn-ghost btn-sm !px-3" hreflang="{{ $otherLocale }}" lang="{{ $otherLocale }}">
                 <x-icon name="globe" class="size-4" /> {{ $otherLocale === 'ar' ? 'العربية' : 'English' }}
             </a>

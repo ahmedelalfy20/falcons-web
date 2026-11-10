@@ -13,7 +13,7 @@
 @endphp
 @php $b = $badges[$store]; $sm = $size === 'sm'; @endphp
 <a href="{{ $url }}" target="_blank" rel="noopener" dir="ltr" aria-label="{{ $b['label'] }} {{ $b['store'] }}"
-   {{ $attributes->class(['group flex items-center justify-center gap-3 border border-white/15 bg-black text-start text-white transition hover:-translate-y-0.5 hover:border-white/35 hover:shadow-lg hover:shadow-black/50',
+   {{ $attributes->class(['theme-dark group flex items-center justify-center gap-3 border border-white/15 bg-black text-start text-white transition hover:-translate-y-0.5 hover:border-white/35 hover:shadow-lg hover:shadow-black/50',
         'rounded-2xl px-6 py-3.5' => ! $sm, 'rounded-xl px-3.5 py-2' => $sm]) }}>
     <span @class(['[&>svg]:size-5' => $sm])>{!! $b['svg'] !!}</span>
     <span class="leading-tight">

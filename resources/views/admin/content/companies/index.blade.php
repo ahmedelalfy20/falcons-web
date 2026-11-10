@@ -17,7 +17,7 @@
                 <ul class="grid gap-3 sm:grid-cols-2" role="list">
                     @foreach ($companies as $c)
                         <li class="card flex items-center gap-4 p-3 pe-4">
-                            <span @class(['flex h-16 w-28 shrink-0 items-center justify-center rounded-xl p-2', 'bg-white' => $c->on_light, 'bg-ink-900' => ! $c->on_light])>
+                            <span @class(['flex h-16 w-28 shrink-0 items-center justify-center rounded-xl p-2', 'bg-white' => $c->on_light, 'theme-dark bg-ink-900' => ! $c->on_light])>
                                 <img src="{{ media($c->logo) }}" alt="" loading="lazy" class="max-h-full max-w-full object-contain">
                             </span>
                             <div class="min-w-0 flex-1">

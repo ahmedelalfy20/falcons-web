@@ -35,7 +35,7 @@
                             @if ($member->company)
                                 <div class="card flex items-center gap-4 p-4">
                                     <div @class(['flex h-12 w-24 shrink-0 items-center justify-center rounded-lg', 'bg-white px-2' => $member->company->on_light])>
-                                        <img src="{{ media($member->company->logo) }}" alt="{{ $member->company->tr('name') }}" class="max-h-full max-w-full object-contain">
+                                        <img src="{{ media($member->company->logo) }}" alt="{{ $member->company->tr('name') }}" @class(['max-h-full max-w-full object-contain', 'logo-mono' => ! $member->company->on_light])>
                                     </div>
                                     <p class="text-sm leading-snug text-fg-muted">{{ __('Company') }}<span class="block font-semibold text-fg">{{ $member->company->tr('name') }}</span></p>
                                 </div>

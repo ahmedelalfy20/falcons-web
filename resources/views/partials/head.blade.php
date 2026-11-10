@@ -2,6 +2,18 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <meta name="theme-color" content="#080a09">
+<script>
+    // Apply the saved theme before first paint (no flash). Default: dark.
+    (function () {
+        try {
+            var t = localStorage.getItem('theme');
+            if (t === 'light') {
+                document.documentElement.setAttribute('data-theme', 'light');
+                document.querySelector('meta[name="theme-color"]').setAttribute('content', '#f7f6f2');
+            }
+        } catch (e) {}
+    })();
+</script>
 <title>{{ isset($title) && $title ? $title.' · ' : '' }}{{ __('Falcons Academy') }}</title>
 <meta name="description" content="{{ $description ?? __('Falcons Academy — elite trading education, mentorship and a community of professional traders across the MENA region.') }}">
 <meta property="og:title" content="{{ $title ?? __('Falcons Academy') }}">

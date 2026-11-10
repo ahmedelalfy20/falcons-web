@@ -271,6 +271,24 @@ Alpine.data('studio', (images = [], interval = 5000) => ({
  * Count-up number: animates from 0 to `target` the first time it scrolls into view.
  * The server renders the final value, so no-JS visitors and crawlers still see it.
  */
+/** Light / dark theme switch (persisted in localStorage; applied pre-paint by partials/head). */
+Alpine.data('themeToggle', () => ({
+    light: document.documentElement.getAttribute('data-theme') === 'light',
+    toggle() {
+        const root = document.documentElement;
+        this.light = !this.light;
+        root.classList.add('theme-transition');
+        if (this.light) root.setAttribute('data-theme', 'light'); else root.removeAttribute('data-theme');
+        try { localStorage.setItem('theme', this.light ? 'light' : 'dark'); } catch (e) {}
+        document.querySelector('meta[name="theme-color"]')?.setAttribute('content', this.light ? '#f7f6f2' : '#080a09');
+        window.dispatchEvent(new CustomEvent('theme-changed', { detail: { light: this.light } }));
+        setTimeout(() => root.classList.remove('theme-transition'), 350);
+    },
+    init() {
+        window.addEventListener('theme-changed', (e) => { this.light = e.detail.light; });
+    },
+}));
+
 Alpine.data('countUp', (target = 0, duration = 1800) => ({
     display: new Intl.NumberFormat('en-US').format(target),
     init() {

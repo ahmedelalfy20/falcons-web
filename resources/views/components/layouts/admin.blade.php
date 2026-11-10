@@ -92,6 +92,7 @@
                     @isset($breadcrumb)<div class="truncate text-xs text-fg-subtle">{{ $breadcrumb }}</div>@endisset
                     <p class="truncate text-sm font-semibold lg:hidden">{{ $heading ?? $title }}</p>
                 </div>
+                <x-theme-toggle />
                 <a href="{{ route('locale', $otherLocale) }}" class="btn btn-ghost btn-sm" lang="{{ $otherLocale }}"><x-icon name="globe" class="size-4" />{{ $otherLocale === 'ar' ? 'العربية' : 'English' }}</a>
             </div>
         </header>

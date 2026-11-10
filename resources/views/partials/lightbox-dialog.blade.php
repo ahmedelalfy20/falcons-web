@@ -5,7 +5,7 @@
              x-transition:leave="transition duration-150 ease-in" x-transition:leave-end="opacity-0"
              @keydown.escape.window="open && close()" @keydown.arrow-right.window="open && (document.dir === 'rtl' ? prev() : next())" @keydown.arrow-left.window="open && (document.dir === 'rtl' ? next() : prev())"
              @touchstart.passive="touchStart($event)" @touchend.passive="touchEnd($event)" @click.self="close()"
-             class="fixed inset-0 z-[150] flex items-center justify-center bg-ink-950/95 p-3 backdrop-blur-sm sm:p-8">
+             class="theme-dark fixed inset-0 z-[150] flex items-center justify-center bg-ink-950/95 p-3 backdrop-blur-sm sm:p-8">
             <button type="button" x-ref="close" @click="close()" class="absolute end-3 top-3 z-10 flex size-11 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 sm:end-6 sm:top-6" aria-label="{{ __('Close') }}"><x-icon name="x" class="size-5" /></button>
             <button type="button" @click="prev()" x-show="images.length > 1" class="absolute start-2 top-1/2 z-10 flex size-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 sm:start-6" aria-label="{{ __('Previous') }}"><x-icon name="chevron-left" class="size-5" /></button>
             <button type="button" @click="next()" x-show="images.length > 1" class="absolute end-2 top-1/2 z-10 flex size-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 sm:end-6" aria-label="{{ __('Next') }}"><x-icon name="chevron-right" class="size-5" /></button>
