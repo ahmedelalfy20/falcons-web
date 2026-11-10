@@ -7,6 +7,7 @@
     @include('partials.home.leaders')
     @include('partials.home.courses')
     @include('partials.home.competition-teaser')
+    @include('partials.home.gifts')
     @include('partials.home.companies')
     @include('partials.home.join')
 </x-layouts.site>

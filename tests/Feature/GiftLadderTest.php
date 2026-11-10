@@ -195,6 +195,8 @@ class GiftLadderTest extends TestCase
         $this->gift(30, 1, 'Falcons Mug');
         $this->gift(60, 2, 'Headphones');
 
+        $this->get('/')->assertOk()->assertSee(__('Collect points, unlock gifts'))->assertSee('Falcons Mug')->assertSee('Headphones');
+
         $this->get('/competition')->assertOk()
             ->assertSee('Falcons Mug')->assertSee('Headphones')
             ->assertSee(__('Choose 1 of :n', ['n' => 2]))

@@ -12,10 +12,11 @@ use Illuminate\Http\Request;
 
 class PageController extends Controller
 {
-    public function home(RoundService $rounds)
+    public function home(RoundService $rounds, \App\Services\GiftService $gifts)
     {
         $competition = Competition::active();
         $round = $competition ? $rounds->syncExpired($competition->currentRound()) : null;
+        $leader = auth()->user()?->isLeader() ? auth()->user()->leader : null;
 
         return view('pages.home', [
             'scanners' => Scanner::visible()->get(),
@@ -25,6 +26,9 @@ class PageController extends Controller
             'companies' => \App\Models\Company::visible()->get(),
             'competition' => $competition,
             'round' => $round,
+            // Gift showcase; for a signed-in leader the gifts carry their unlocked state.
+            'giftProgress' => $leader ? $gifts->progressFor($leader) : null,
+            'gifts' => $leader ? null : $gifts->ladder(),
         ]);
     }
 

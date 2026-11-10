@@ -1,21 +1,91 @@
-@if ($gifts->isNotEmpty())
-<section id="gifts" aria-labelledby="gifts-title" class="border-t border-line bg-ink-900/40 py-20 sm:py-28">
-    <div class="container-x grid gap-10 lg:grid-cols-12 lg:gap-12">
-        <div class="lg:col-span-5">
-            <x-section-heading id="gifts-title" :eyebrow="__('Exclusive Gifts')" :title="__('Gifts for our community')"
-                :lead="__('Discover our special gifts and exclusive content prepared for our valued community members.')" />
-            @if (file_exists(public_path('media/gifts/gift-video.mp4')))
-                <div class="mt-8 overflow-hidden rounded-2xl border border-line bg-black" data-reveal>
-                    {{-- preload="none": the video costs nothing until the visitor presses play --}}
-                    <video controls preload="none" playsinline poster="{{ media($gifts->first()->thumb_path ?: $gifts->first()->path) }}" class="aspect-square w-full object-cover">
-                        <source src="{{ asset('media/gifts/gift-video.mp4') }}" type="video/mp4">
-                    </video>
+{{-- Homepage gift showcase: the reward ladder as a row of product cards. --}}
+@php
+    $list = $giftProgress['gifts'] ?? $gifts ?? collect();
+    $total = $giftProgress['total'] ?? null;
+    $per = $competition?->pointsPerRegistration() ?? 10;
+@endphp
+@if ($list->isNotEmpty())
+    <section id="gifts" class="relative overflow-hidden pt-8 pb-16 sm:pt-10 sm:pb-20" aria-labelledby="home-gifts-title">
+        <div class="pointer-events-none absolute inset-x-0 top-1/3 h-2/3 bg-[radial-gradient(50%_60%_at_50%_40%,rgb(34_197_132/0.10),transparent_70%)]" aria-hidden="true"></div>
+        <div class="container-x relative">
+            <div class="flex flex-wrap items-end justify-between gap-6" data-reveal>
+                <div class="max-w-2xl">
+                    <p class="eyebrow">{{ __('Leader rewards') }}</p>
+                    <h2 id="home-gifts-title" class="h-section mt-3">{{ __('Collect points, unlock gifts') }}</h2>
+                    <p class="lead mt-4">{{ __('Every approved registration earns :n points. Points never reset — each gift you unlock keeps them, and they carry you to the next one.', ['n' => $per]) }}</p>
                 </div>
+                <div class="flex flex-wrap gap-3">
+                    @if ($total !== null)
+                        <a href="{{ route('leader.dashboard') }}#gifts" class="btn btn-primary"><x-icon name="gift" class="size-4" />{{ __('My gifts') }}</a>
+                    @else
+                        <a href="{{ route('leader.signup') }}" class="btn btn-primary">{{ __('Become a leader') }} <x-icon name="arrow-right" class="size-4" /></a>
+                    @endif
+                    <a href="{{ route('competition') }}#gifts" class="btn btn-outline">{{ __('All gift details') }}</a>
+                </div>
+            </div>
+
+            {{-- Level path --}}
+            <div class="relative mt-12 hidden lg:block" aria-hidden="true">
+                <div class="absolute inset-x-[12.5%] top-1/2 h-px -translate-y-1/2 bg-gradient-to-r from-brand-500/0 via-brand-500/50 to-brand-500/0"></div>
+                <div class="relative grid" style="grid-template-columns: repeat({{ min(4, $list->count()) }}, minmax(0, 1fr))">
+                    @foreach ($list->take(4) as $g)
+                        @php $open = $total !== null && $total >= $g->points_required; @endphp
+                        <div class="flex justify-center">
+                            <span @class(['num flex items-center gap-2 rounded-full border px-4 py-1.5 text-sm font-bold backdrop-blur',
+                                'border-brand-500 bg-brand-500 text-ink-950' => $open, 'border-brand-500/40 bg-ink-950 text-brand-300' => ! $open])>
+                                <x-icon :name="$open ? 'check' : 'sparkle'" class="size-3.5" />{{ number_format($g->points_required) }} {{ __('points') }}
+                            </span>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+
+            {{-- Cards: grid on desktop, swipeable row on phones --}}
+            <ol class="-mx-4 mt-8 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-4 [scrollbar-width:none] sm:mx-0 sm:grid sm:grid-cols-2 sm:overflow-visible sm:px-0 sm:pb-0 lg:mt-6 lg:grid-cols-4" role="list">
+                @foreach ($list->take(4) as $gift)
+                    @php
+                        $opts = $gift->options->take(4)->values();
+                        $open = $total !== null && $total >= $gift->points_required;
+                        $need = $total !== null ? max(0, $gift->points_required - $total) : null;
+                    @endphp
+                    <li class="gift-card group relative flex w-[78%] shrink-0 snap-center flex-col overflow-hidden rounded-[1.6rem] border border-line bg-ink-850 transition-[transform,border-color,box-shadow] duration-500 hover:-translate-y-1.5 hover:border-brand-500/40 hover:shadow-[0_30px_70px_-40px_rgb(34_197_132/0.6)] sm:w-auto" data-reveal
+                        x-data="{ view: 0 }" @if ($opts->count() > 1) x-init="setInterval(() => view = (view + 1) % {{ $opts->count() }}, 2600)" @endif>
+                        <div class="gift-hero theme-dark relative aspect-[4/3.4] overflow-hidden">
+                            <span class="gift-hero-num num pointer-events-none absolute -bottom-6 start-3 select-none text-[7.5rem] font-extrabold leading-none" aria-hidden="true">{{ str_pad($loop->iteration, 2, '0', STR_PAD_LEFT) }}</span>
+                            <span class="gift-spot absolute inset-0" aria-hidden="true"></span>
+                            @foreach ($opts as $i => $o)
+                                <img src="{{ $o->imageUrl() }}" alt="{{ $o->tr('label') ?: $gift->tr('name') }}" loading="lazy" decoding="async"
+                                     x-show="view === {{ $i }}" @if ($i) x-cloak @endif
+                                     x-transition:enter="transition duration-700 ease-out" x-transition:enter-start="opacity-0 scale-95"
+                                     class="gift-product absolute inset-x-[12%] bottom-[10%] top-[16%] h-[74%] w-[76%] object-contain object-bottom transition-transform duration-700 ease-[var(--ease-out-soft)] group-hover:-translate-y-2 group-hover:scale-105">
+                            @endforeach
+                            <span class="absolute start-3 top-3 inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.07] px-2.5 py-1 text-[0.7rem] font-medium text-fg-muted backdrop-blur">
+                                <x-icon :name="$open ? 'check' : ($total !== null ? 'lock' : 'gift')" class="size-3" />{{ __('Level :n', ['n' => $loop->iteration]) }}
+                            </span>
+                            @if ($opts->count() > 1)
+                                <span class="absolute end-3 top-3 rounded-full bg-black/40 px-2.5 py-1 text-[0.7rem] font-medium text-fg backdrop-blur">{{ __('Choose 1 of :n', ['n' => $opts->count()]) }}</span>
+                            @endif
+                        </div>
+                        <div class="flex flex-1 flex-col p-5">
+                            <p class="num text-[0.7rem] font-bold uppercase tracking-[0.18em] text-brand-400 rtl:tracking-normal">{{ number_format($gift->points_required) }} {{ __('points') }}</p>
+                            <h3 class="mt-1 text-lg font-bold leading-snug">{{ $gift->tr('name') }}</h3>
+                            @if ($gift->tr('description'))<p class="mt-1 line-clamp-2 text-sm text-fg-muted">{{ $gift->tr('description') }}</p>@endif
+                            <p class="mt-auto flex items-center gap-1.5 pt-4 text-xs font-medium">
+                                @if ($open)
+                                    <span class="flex items-center gap-1.5 text-brand-300"><x-icon name="check" class="size-3.5" />{{ __('Unlocked') }}</span>
+                                @elseif ($need !== null)
+                                    <span class="flex items-center gap-1.5 text-fg-subtle"><x-icon name="lock" class="size-3.5" />{{ __(':n points left', ['n' => number_format($need)]) }}</span>
+                                @else
+                                    <span class="flex items-center gap-1.5 text-fg-subtle"><x-icon name="lock" class="size-3.5" />{{ __('Unlocks at :n points', ['n' => number_format($gift->points_required)]) }}</span>
+                                @endif
+                            </p>
+                        </div>
+                    </li>
+                @endforeach
+            </ol>
+            @if ($list->count() > 4)
+                <p class="mt-6 text-center"><a href="{{ route('competition') }}#gifts" class="text-sm font-semibold text-brand-300 hover:text-brand-200">{{ __('+:n more gifts', ['n' => $list->count() - 4]) }}</a></p>
             @endif
         </div>
-        <div class="lg:col-span-7">
-            <x-lightbox-gallery :images="$gifts" :label="__('Gift gallery')" variant="squares" data-reveal />
-        </div>
-    </div>
-</section>
+    </section>
 @endif
