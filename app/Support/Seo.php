@@ -92,6 +92,28 @@ class Seo
         ];
     }
 
+    /**
+     * The page itself, with its main image spelled out so search engines use
+     * it as the result thumbnail instead of guessing from images on the page.
+     */
+    public static function webPage(string $title, string $description, string $image): array
+    {
+        $home = route('home');
+
+        return [
+            '@type' => 'WebPage',
+            '@id' => self::url(app()->getLocale()).'#webpage',
+            'url' => self::url(app()->getLocale()),
+            'name' => $title,
+            'description' => $description,
+            'inLanguage' => app()->getLocale(),
+            'isPartOf' => ['@id' => $home.'#website'],
+            'about' => ['@id' => $home.'#organization'],
+            'primaryImageOfPage' => ['@type' => 'ImageObject', 'url' => $image],
+            'image' => $image,
+        ];
+    }
+
     public static function jsonLd(array $extra = []): string
     {
         $graph = ['@context' => 'https://schema.org', '@graph' => array_values(array_merge(self::baseGraph(), $extra))];

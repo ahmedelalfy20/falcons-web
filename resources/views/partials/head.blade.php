@@ -52,7 +52,7 @@
 <meta name="application-name" content="{{ $seoBrand }}">
 <meta name="format-detection" content="telephone=no">
 @unless ($seoNoindex)
-    <script type="application/ld+json">{!! \App\Support\Seo::jsonLd($schema ?? []) !!}</script>
+    <script type="application/ld+json">{!! \App\Support\Seo::jsonLd(array_merge([\App\Support\Seo::webPage($seoTitle, $seoDesc, $seoImage)], $schema ?? [])) !!}</script>
 @endunless
 <link rel="icon" href="{{ asset('favicon.ico') }}" sizes="any">
 <link rel="apple-touch-icon" href="{{ asset('apple-touch-icon.png') }}">
