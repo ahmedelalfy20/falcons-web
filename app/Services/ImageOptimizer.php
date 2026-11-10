@@ -18,7 +18,7 @@ use RuntimeException;
 class ImageOptimizer
 {
     /** @return array{path:string, thumb:?string, width:int, height:int} */
-    public function store(UploadedFile $file, string $folder, int $maxWidth = 1600, ?int $thumbWidth = 640, int $quality = 80, bool $private = false, bool $square = false): array
+    public function store(UploadedFile $file, string $folder, int $maxWidth = 1600, ?int $thumbWidth = 640, int $quality = 80, bool $private = false, bool $square = false, bool $cutout = false): array
     {
         $source = @imagecreatefromstring((string) file_get_contents($file->getRealPath()));
         if (! $source) {
@@ -31,6 +31,9 @@ class ImageOptimizer
 
         if ($square) {
             $source = $this->cropSquare($source);
+        }
+        if ($cutout) {
+            $source = $this->removePlainBackground($this->scaleDown($source, $maxWidth));
         }
 
         $disk = $private ? 'local' : 'public';
@@ -72,6 +75,115 @@ class ImageOptimizer
         Storage::disk($disk)->put($path, $bytes);
 
         return ['path' => $path, 'w' => $w, 'h' => $h];
+    }
+
+    private function scaleDown(\GdImage $src, int $maxWidth): \GdImage
+    {
+        $w = imagesx($src);
+        $h = imagesy($src);
+        if ($w <= $maxWidth) {
+            return $src;
+        }
+        $nh = (int) round($h * $maxWidth / $w);
+        $dst = imagecreatetruecolor($maxWidth, $nh);
+        imagealphablending($dst, false);
+        imagesavealpha($dst, true);
+        imagecopyresampled($dst, $src, 0, 0, 0, 0, $maxWidth, $nh, $w, $h);
+        imagedestroy($src);
+
+        return $dst;
+    }
+
+    /**
+     * Product shots on a plain white/light studio background become cut-outs:
+     * the background connected to the image edges turns transparent, with a soft
+     * edge so there is no white halo. Photos whose corners are not a plain light
+     * colour (lifestyle shots, already-transparent PNGs) are left untouched.
+     */
+    private function removePlainBackground(\GdImage $img): \GdImage
+    {
+        $w = imagesx($img);
+        $h = imagesy($img);
+        if ($w < 16 || $h < 16) {
+            return $img;
+        }
+        $light = function (int $c): bool {
+            $a = ($c >> 24) & 0x7F;
+            if ($a > 100) {
+                return false; // already transparent — nothing to remove
+            }
+            $r = ($c >> 16) & 0xFF; $g = ($c >> 8) & 0xFF; $b = $c & 0xFF;
+
+            return min($r, $g, $b) >= 238 && max($r, $g, $b) - min($r, $g, $b) <= 14;
+        };
+        foreach ([[0, 0], [$w - 1, 0], [0, $h - 1], [$w - 1, $h - 1], [(int) ($w / 2), 0], [0, (int) ($h / 2)]] as [$x, $y]) {
+            if (! $light(imagecolorat($img, $x, $y))) {
+                return $img;
+            }
+        }
+
+        imagealphablending($img, false);
+        imagesavealpha($img, true);
+        $seen = new \SplFixedArray($w * $h);
+        $queue = new \SplQueue;
+        for ($x = 0; $x < $w; $x++) { $queue->enqueue([$x, 0]); $queue->enqueue([$x, $h - 1]); }
+        for ($y = 0; $y < $h; $y++) { $queue->enqueue([0, $y]); $queue->enqueue([$w - 1, $y]); }
+        $edge = [];
+        while (! $queue->isEmpty()) {
+            [$x, $y] = $queue->dequeue();
+            $i = $y * $w + $x;
+            if ($seen[$i]) {
+                continue;
+            }
+            $seen[$i] = true;
+            $c = imagecolorat($img, $x, $y);
+            if (! $light($c)) {
+                $edge[] = [$x, $y, $c]; // first non-background pixel: soften later
+
+                continue;
+            }
+            imagesetpixel($img, $x, $y, 0x7F000000 | ($c & 0xFFFFFF));
+            if ($x > 0) $queue->enqueue([$x - 1, $y]);
+            if ($x < $w - 1) $queue->enqueue([$x + 1, $y]);
+            if ($y > 0) $queue->enqueue([$x, $y - 1]);
+            if ($y < $h - 1) $queue->enqueue([$x, $y + 1]);
+        }
+        // Feather the outline: near-white edge pixels get partial transparency.
+        foreach ($edge as [$x, $y, $c]) {
+            $r = ($c >> 16) & 0xFF; $g = ($c >> 8) & 0xFF; $b = $c & 0xFF;
+            $lum = ($r + $g + $b) / 3;
+            if ($lum > 200) {
+                $alpha = (int) min(110, max(0, ($lum - 200) / 32 * 110));
+                imagesetpixel($img, $x, $y, ($alpha << 24) | ($c & 0xFFFFFF));
+            }
+        }
+
+        // Trim the now-empty margins so the product fills its frame.
+        [$minX, $minY, $maxX, $maxY] = [$w, $h, -1, -1];
+        for ($y = 0; $y < $h; $y++) {
+            for ($x = 0; $x < $w; $x++) {
+                if ($seen[$y * $w + $x] && ((imagecolorat($img, $x, $y) >> 24) & 0x7F) >= 120) {
+                    continue; // removed background
+                }
+                if ($x < $minX) $minX = $x;
+                if ($x > $maxX) $maxX = $x;
+                if ($y < $minY) $minY = $y;
+                if ($y > $maxY) $maxY = $y;
+            }
+        }
+        if ($maxX > $minX + 8 && $maxY > $minY + 8) {
+            $pad = (int) round(max($maxX - $minX, $maxY - $minY) * 0.04);
+            $minX = max(0, $minX - $pad); $minY = max(0, $minY - $pad);
+            $cw = min($w, $maxX + $pad + 1) - $minX; $ch = min($h, $maxY + $pad + 1) - $minY;
+            $crop = imagecreatetruecolor($cw, $ch);
+            imagealphablending($crop, false);
+            imagesavealpha($crop, true);
+            imagecopy($crop, $img, 0, 0, $minX, $minY, $cw, $ch);
+            imagedestroy($img);
+            $img = $crop;
+        }
+
+        return $img;
     }
 
     /** Centre-crop to a square, biased towards the top (faces in portraits). */

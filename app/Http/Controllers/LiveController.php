@@ -6,6 +6,7 @@ use App\Models\Competition;
 use App\Models\Registration;
 use App\Services\RoundService;
 use App\Services\ScoreService;
+use App\Support\BoardRow;
 use App\Support\LiveVersion;
 use App\Support\RoundPayload;
 use Illuminate\Http\Request;
@@ -27,9 +28,10 @@ class LiveController extends Controller
         $payload = ['v' => $version, 'round' => RoundPayload::make($round)];
 
         if ((int) $request->query('v') !== $version && $competition->config('public_leaderboard')) {
-            $payload['leaderboard'] = $scores->leaderboard($round, 20, true)->map(fn ($r) => [
-                'rank' => $r->rank, 'name' => $r->name, 'score' => $r->score, 'photo' => $r->photoUrl(), 'initials' => $r->initials(),
-            ]);
+            $meId = $request->user()?->leader?->id;
+            $board = BoardRow::board($scores->leaderboard($round, null, true), 20, $meId);
+            $payload['leaderboard'] = $board['rows'];
+            $payload['me'] = $board['me'];
         }
 
         return response()->json($payload)->header('Cache-Control', 'no-store');

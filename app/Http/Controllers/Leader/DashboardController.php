@@ -11,6 +11,7 @@ use App\Services\LeaderService;
 use App\Services\QrCodeService;
 use App\Services\RoundService;
 use App\Services\ScoreService;
+use App\Support\BoardRow;
 use App\Support\LiveVersion;
 use App\Support\RoundPayload;
 use Illuminate\Http\Request;
@@ -32,6 +33,10 @@ class DashboardController extends Controller
             'totalLeaders' => $leader->competition->leaders()->whereNotIn('status', ['pending', 'rejected'])->count(),
             'recent' => $round ? Registration::where('leader_id', $leader->id)->where('round_id', $round->id)->latest()->limit(8)->get(['id', 'full_name', 'status', 'created_at']) : collect(),
             'gifts' => $this->gifts->progressFor($leader),
+            'account' => $this->gifts->summary($leader),
+            'board' => $round ? BoardRow::board($this->scores->leaderboard($round, null, true), 20, $leader->id) : ['rows' => [], 'me' => null],
+            'pointsLog' => Registration::with('round:id,number,name')->where('leader_id', $leader->id)->where('competition_id', $leader->competition_id)
+                ->where('status', 'accepted')->latest('reviewed_at')->latest('id')->limit(50)->get(['id', 'round_id', 'full_name', 'reviewed_at', 'created_at']),
             'perRegistration' => $leader->competition->pointsPerRegistration(),
             'history' => $leader->competition->rounds()->where('status', 'finished')->get()->map(fn ($r) => ['round' => $r, 'row' => $this->scores->rankOf($r, $leader->id)]),
         ]);
@@ -44,9 +49,13 @@ class DashboardController extends Controller
         if (! $round) {
             return response()->json(['round' => null, 'leader_status' => $leader->status]);
         }
+        $all = $this->scores->leaderboard($round, null, true);
         $row = $this->scores->rankOf($round, $leader->id);
+        $board = BoardRow::board($all, 20, $leader->id);
 
         return response()->json([
+            'leaderboard' => $board['rows'],
+            'me' => $board['me'],
             'v' => LiveVersion::get('round.'.$round->id),
             'round' => RoundPayload::make($round),
             'leader_status' => $leader->status,

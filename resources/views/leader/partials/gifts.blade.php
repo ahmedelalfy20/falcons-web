@@ -19,16 +19,6 @@
                 <h2 id="gifts-title" class="mt-3 text-2xl font-bold tracking-tight sm:text-3xl">{{ __('Collect points, unlock gifts') }}</h2>
                 <p class="mt-2 max-w-xl text-sm text-fg-muted">{{ __('Your points never reset — every gift you unlock keeps them, and they carry you to the next one.') }}</p>
             </div>
-            <div class="flex items-end gap-6">
-                <div>
-                    <p class="text-xs text-fg-subtle">{{ __('Total points') }}</p>
-                    <p class="num text-5xl font-extrabold tracking-tight text-brand-300">{{ number_format($g['total']) }}</p>
-                </div>
-                <div class="border-s border-line ps-6">
-                    <p class="text-xs text-fg-subtle">{{ __('Gifts unlocked') }}</p>
-                    <p class="num text-3xl font-extrabold">{{ $g['unlockedCount'] }}<span class="text-lg text-fg-subtle">/{{ $list->count() }}</span></p>
-                </div>
-            </div>
         </div>
 
         {{-- Track --}}

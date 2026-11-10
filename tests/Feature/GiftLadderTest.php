@@ -176,6 +176,10 @@ class GiftLadderTest extends TestCase
         $this->post("/admin/gift-claims/{$claim->id}/deliver")->assertRedirect();
         $this->assertSame('delivered', $claim->fresh()->status);
         $this->assertSame($admin->id, $claim->fresh()->delivered_by);
+
+        $this->delete("/admin/gifts/{$gift->id}")->assertRedirect(route('admin.gifts.index'));
+        $this->assertDatabaseCount('gifts', 0);
+        $this->assertDatabaseCount('gift_options', 0);
     }
 
     public function test_reviewers_cannot_manage_gifts(): void
@@ -195,5 +199,56 @@ class GiftLadderTest extends TestCase
             ->assertSee('Falcons Mug')->assertSee('Headphones')
             ->assertSee(__('Choose 1 of :n', ['n' => 2]))
             ->assertSee(__('Approved = :n points', ['n' => 10]));
+    }
+
+    public function test_leaderboard_shows_top_twenty_and_the_signed_in_leaders_own_row(): void
+    {
+        $c = $this->competition();
+        $round = $this->runningRound($c);
+        $leaders = collect(range(1, 22))->map(fn ($i) => $this->leader($c, '0100000'.str_pad((string) $i, 4, '0', STR_PAD_LEFT), "Leader {$i}", $i === 22));
+        // Leader 1 gets the most points, leader 22 none.
+        $regs = app(RegistrationService::class);
+        $admin = $this->reviewer();
+        $n = 0;
+        foreach ($leaders->take(3) as $i => $leader) {
+            for ($k = 0; $k < 3 - $i; $k++) {
+                $regs->accept($regs->submit($leader->unique_code, $this->participant(++$n)), $admin);
+            }
+        }
+
+        $json = $this->getJson('/live/competition')->assertOk()->json();
+        $this->assertCount(20, $json['leaderboard']);
+        $this->assertSame(['rank' => 1, 'accepted' => 3, 'score' => 30], array_intersect_key($json['leaderboard'][0], array_flip(['rank', 'score', 'accepted'])));
+        $this->assertNull($json['me']);
+
+        $me = $leaders->last();
+        $this->actingAs($me->user);
+        $json = $this->getJson('/live/competition')->json();
+        $this->assertSame('Leader 22', $json['me']['name']);
+        $this->assertTrue($json['me']['me']);
+        $this->assertSame(22, $json['me']['rank']);
+
+        $this->getJson('/leader/live')->assertOk()->assertJsonCount(20, 'leaderboard')->assertJsonPath('me.rank', 22);
+    }
+
+    public function test_leader_sees_account_details_across_the_site(): void
+    {
+        $c = $this->competition();
+        $this->runningRound($c);
+        $leader = $this->leader($c, '01000000001', 'Omar Hassan', true);
+        $this->gift(30, 1, 'Mug');
+        $this->gift(60, 1, 'Headphones');
+        $this->acceptMany($leader, 4); // 40 points
+        $this->actingAs($leader->user);
+
+        // Header chip + account card on public pages.
+        $this->get('/competition')->assertOk()
+            ->assertSee(__('Your account'))->assertSee(__('Next gift'))->assertSee('Headphones')
+            ->assertSee(__(':n points left', ['n' => 20]), false);
+        $this->get('/')->assertOk()->assertSee(__('My dashboard'));
+
+        // Dashboard: tabs, points history.
+        $this->get('/leader')->assertOk()
+            ->assertSee(__('Points history'))->assertSee(__('Approved registration'))->assertSee('+10');
     }
 }

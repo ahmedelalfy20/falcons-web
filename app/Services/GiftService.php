@@ -61,6 +61,33 @@ class GiftService
         ];
     }
 
+    /**
+     * Compact account snapshot for the site header and competition page:
+     * lifetime points, current-round rank, and the nearest gift.
+     */
+    public function summary(Leader $leader): array
+    {
+        $p = $this->progressFor($leader);
+        $round = $leader->competition?->currentRound();
+        $row = $round ? $this->scores->rankOf($round, $leader->id) : null;
+        $next = $p['next'];
+
+        return [
+            'total' => $p['total'],
+            'rank' => $row?->rank,
+            'round_points' => (int) ($row?->score ?? 0),
+            'unlocked' => $p['unlockedCount'],
+            'gifts' => $p['gifts']->count(),
+            'percent' => $p['percent'],
+            'remaining' => $p['remaining'],
+            'next' => $next ? [
+                'name' => $next->tr('name'),
+                'points' => $next->points_required,
+                'image' => $next->options->first()?->imageUrl(true),
+            ] : null,
+        ];
+    }
+
     /** Record (or change) the leader's pick for an unlocked gift. */
     public function choose(Leader $leader, Gift $gift, ?int $optionId): GiftClaim
     {

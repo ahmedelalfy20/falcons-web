@@ -82,7 +82,7 @@ class GiftController extends Controller
     public function destroy(Gift $gift)
     {
         $this->authorize('manage-competitions');
-        foreach ($gift->options as $option) {
+        foreach ($gift->options()->get() as $option) {
             $this->images->delete($option->image);
         }
         $this->audit->log('gift.deleted', $gift, ['name' => $gift->name]);
@@ -158,7 +158,7 @@ class GiftController extends Controller
                 continue;
             }
             try {
-                $path = $this->images->store($file, 'gifts', 1200, 480, 84)['path'];
+                $path = $this->images->store($file, 'gifts', 1200, 480, 86, cutout: true)['path'];
             } catch (\RuntimeException) {
                 throw ValidationException::withMessages(["new_options.{$i}.image" => __('We could not read this image. Please upload a JPG, PNG or WebP photo.')]);
             }

@@ -9,6 +9,8 @@
         ['label' => __('Free Courses'), 'href' => route('free-courses'), 'active' => request()->routeIs('free-courses*')],
     ];
     $otherLocale = app()->getLocale() === 'ar' ? 'en' : 'ar';
+    $me = auth()->user()?->isLeader() ? auth()->user()->leader : null;
+    $acct = $me ? app(\App\Services\GiftService::class)->summary($me) : null;
 @endphp
 <header x-data="{ open: false, scrolled: false }"
         x-init="scrolled = window.scrollY > 8; window.addEventListener('scroll', () => scrolled = window.scrollY > 8, { passive: true })"
@@ -33,6 +35,9 @@
         </nav>
 
         <div class="flex items-center gap-1 sm:gap-2">
+            @if ($acct)
+                @include('partials.account-chip', ['leader' => $me, 'account' => $acct])
+            @endif
             <x-theme-toggle />
             <a href="{{ route('locale', $otherLocale) }}" class="btn btn-ghost btn-sm !px-3" hreflang="{{ $otherLocale }}" lang="{{ $otherLocale }}">
                 <x-icon name="globe" class="size-4" /> {{ $otherLocale === 'ar' ? 'العربية' : 'English' }}
@@ -59,6 +64,8 @@
             <div class="mt-auto grid gap-3 pt-8">
                 @guest
                     <a href="{{ route('login') }}" class="btn btn-outline btn-lg">{{ __('Log in') }}</a>
+                @else
+                    <a href="{{ auth()->user()->homeRoute() }}" class="btn btn-outline btn-lg">{{ __('Open my dashboard') }}</a>
                 @endguest
                 <a href="{{ join_url() }}" target="_blank" rel="noopener" class="btn btn-primary btn-lg"><x-icon name="telegram" class="size-5" />{{ __('Join us') }}</a>
             </div>

@@ -56,7 +56,24 @@
                 <x-alert level="warning" class="mt-6">{{ __('Your leader account is suspended. Your QR code will not accept new registrations until an admin reactivates it.') }}</x-alert>
             @endif
 
-            <div class="mt-8 grid gap-5 lg:grid-cols-12">
+            <div class="mt-8">@include('competition.partials.account-card', ['account' => $account, 'leader' => $leader, 'cta' => false])</div>
+
+            <div x-data="{ tab: 'overview', tabs: ['overview', 'gifts', 'board', 'history'], set(t) { this.tab = t; history.replaceState(null, '', '#' + t) } }"
+                 x-init="const h = location.hash.slice(1); if (tabs.includes(h)) tab = h; window.addEventListener('hashchange', () => { const t = location.hash.slice(1); if (tabs.includes(t)) tab = t })">
+            <nav class="sticky top-16 z-30 -mx-4 mt-6 overflow-x-auto bg-ink-950/90 px-4 py-2 backdrop-blur [scrollbar-width:none] sm:mx-0 sm:rounded-2xl sm:border sm:border-line sm:bg-ink-850 sm:p-1.5 lg:top-[4.75rem]" role="tablist" aria-label="{{ __('Your account') }}">
+                <div class="flex min-w-max gap-1">
+                    @foreach (['overview' => ['dashboard', __('Overview')], 'gifts' => ['gift', __('Gifts')], 'board' => ['trophy', __('Leaderboard')], 'history' => ['history', __('Points history')]] as $key => [$icon, $label])
+                        <button type="button" role="tab" :aria-selected="tab === '{{ $key }}'" @click="set('{{ $key }}')"
+                                class="flex min-h-11 items-center gap-2 rounded-xl px-4 text-sm font-semibold transition-colors"
+                                :class="tab === '{{ $key }}' ? 'bg-brand-500 text-ink-950 shadow-[0_8px_24px_-10px_rgb(34_197_132/0.7)]' : 'text-fg-muted hover:bg-ink-800 hover:text-fg'">
+                            <x-icon :name="$icon" class="size-4" />{{ $label }}
+                        </button>
+                    @endforeach
+                </div>
+            </nav>
+
+            <div x-show="tab === 'overview'" role="tabpanel">
+            <div class="mt-5 grid gap-5 lg:grid-cols-12">
                 {{-- Referral card --}}
                 <section class="card overflow-hidden lg:col-span-5" aria-labelledby="ref-title" x-data="copyable(@js($url))">
                     <div class="flex flex-col items-center gap-6 p-6 sm:flex-row sm:items-start lg:flex-col lg:items-center">
@@ -109,10 +126,6 @@
                 </section>
             </div>
 
-            @if ($gifts['gifts']->isNotEmpty())
-                @include('leader.partials.gifts', ['g' => $gifts])
-            @endif
-
             <div class="mt-5 grid gap-5 lg:grid-cols-12">
                 <section class="card lg:col-span-7" aria-labelledby="recent-title">
                     <div class="flex items-center justify-between border-b border-line px-5 py-4 sm:px-6">
@@ -150,6 +163,53 @@
                     @endforelse
                 </section>
             </div>
+            </div>{{-- /overview --}}
+
+            <div x-show="tab === 'gifts'" x-cloak role="tabpanel">
+                @if ($gifts['gifts']->isNotEmpty())
+                    @include('leader.partials.gifts', ['g' => $gifts])
+                @else
+                    <div class="card mt-5"><x-empty icon="gift" :title="__('Gifts are coming soon')" :text="__('Keep collecting points — they will count toward the gifts once they are announced.')" /></div>
+                @endif
+            </div>
+
+            <div x-show="tab === 'board'" x-cloak role="tabpanel" class="mt-5"
+                 x-data="{ rows: @js($board['rows']), me: @js($board['me']), flash: {} }"
+                 @live-data.window="if ($event.detail.leaderboard) { const prev = Object.fromEntries(rows.map(r => [r.name, r.score])); rows = $event.detail.leaderboard; me = $event.detail.me ?? null; rows.forEach(r => { if (prev[r.name] !== undefined && prev[r.name] !== r.score) flash[r.name] = Date.now() }) }">
+                <div class="mb-4 flex flex-wrap items-end justify-between gap-3">
+                    <div>
+                        <h2 class="text-xl font-bold">{{ __('Top leaders') }}</h2>
+                        <p class="text-sm text-fg-muted">@if ($round){{ $round->displayName() }} · @endif{{ __('Top 20 leaders') }}</p>
+                    </div>
+                    <p class="flex items-center gap-2 text-sm text-fg-subtle"><span class="size-2 rounded-full bg-brand-400"></span>{{ __('Updates automatically') }}</p>
+                </div>
+                @include('competition.partials.board-table')
+            </div>
+
+            <div x-show="tab === 'history'" x-cloak role="tabpanel" class="mt-5">
+                <section class="card" aria-labelledby="log-title">
+                    <div class="flex flex-wrap items-center justify-between gap-3 border-b border-line px-5 py-4 sm:px-6">
+                        <div>
+                            <h2 id="log-title" class="font-bold">{{ __('Points history') }}</h2>
+                            <p class="text-xs text-fg-subtle">{{ __('Every approved registration adds :n points.', ['n' => $perRegistration]) }}</p>
+                        </div>
+                        <p class="num text-sm text-fg-muted">{{ __('Total points') }}: <span class="font-extrabold text-brand-300">{{ number_format($gifts['total']) }}</span></p>
+                    </div>
+                    @forelse ($pointsLog as $log)
+                        <div class="flex items-center gap-4 border-b border-line px-5 py-3.5 last:border-0 sm:px-6">
+                            <span class="flex size-10 shrink-0 items-center justify-center rounded-full bg-brand-500/10 text-brand-300"><x-icon name="check" class="size-4" /></span>
+                            <div class="min-w-0 flex-1">
+                                <p class="truncate font-medium">{{ $log->full_name }}</p>
+                                <p class="text-xs text-fg-subtle">{{ __('Approved registration') }} · {{ $log->round?->displayName() }} · {{ ($log->reviewed_at ?? $log->created_at)->translatedFormat('j M Y') }}</p>
+                            </div>
+                            <span class="num shrink-0 rounded-full bg-brand-500/10 px-3 py-1 text-sm font-extrabold text-brand-300" dir="ltr">+{{ $perRegistration }}</span>
+                        </div>
+                    @empty
+                        <x-empty icon="history" :title="__('No points yet')" :text="__('Share your QR code — each approved registration adds points here.')" />
+                    @endforelse
+                </section>
+            </div>
+            </div>{{-- /tabs --}}
         </div>
     </div>
 </x-layouts.site>

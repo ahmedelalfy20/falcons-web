@@ -77,7 +77,7 @@ class ScoreService
             ->leftJoin('leader_scores as s', function ($j) use ($round) {
                 $j->on('s.leader_id', '=', 'leaders.id')->where('s.round_id', '=', $round->id);
             })
-            ->select('leaders.id', 'leaders.name', 'leaders.unique_code', 'leaders.status', 'leaders.photo')
+            ->select('leaders.id', 'leaders.name', 'leaders.unique_code', 'leaders.status', 'leaders.photo', 'leaders.team')
             ->selectRaw('COALESCE(s.accepted_count, 0) as accepted')
             ->selectRaw('COALESCE(s.pending_count, 0) as pending')
             ->selectRaw('COALESCE(s.rejected_count, 0) as rejected')

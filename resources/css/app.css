@@ -360,4 +360,51 @@ html.theme-transition, html.theme-transition *, html.theme-transition *::before,
 }
 
 /* Gift photos sit on a neutral studio tile in both themes (product shots are usually on white). */
-.gift-photo { background: #fff; box-shadow: inset 0 0 0 1px rgb(16 21 19 / 0.07); }
+/* Gift showcase banner (always dark, like a product stage). */
+.gift-hero {
+    background:
+        radial-gradient(70% 90% at 82% 55%, rgb(34 197 132 / 0.28), transparent 60%),
+        radial-gradient(60% 80% at 0% 0%, rgb(255 255 255 / 0.05), transparent 60%),
+        linear-gradient(160deg, #0f1c17 0%, #08110d 55%, #060c0a 100%);
+}
+[dir='rtl'] .gift-hero {
+    background:
+        radial-gradient(70% 90% at 18% 55%, rgb(34 197 132 / 0.28), transparent 60%),
+        radial-gradient(60% 80% at 100% 0%, rgb(255 255 255 / 0.05), transparent 60%),
+        linear-gradient(200deg, #0f1c17 0%, #08110d 55%, #060c0a 100%);
+}
+.gift-hero::before {
+    content: ''; position: absolute; inset: 0; pointer-events: none; opacity: 0.06;
+    background-image: linear-gradient(rgb(255 255 255 / 0.7) 1px, transparent 1px), linear-gradient(90deg, rgb(255 255 255 / 0.7) 1px, transparent 1px);
+    background-size: 32px 32px;
+    mask-image: radial-gradient(80% 80% at 70% 50%, black, transparent);
+}
+.gift-hero::after {
+    content: ''; position: absolute; inset-inline: 0; bottom: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, rgb(34 197 132 / 0.45), transparent);
+}
+.gift-hero-num { color: transparent; -webkit-text-stroke: 1.5px rgb(255 255 255 / 0.07); }
+.gift-spot { background: radial-gradient(38% 10% at 50% 90%, rgb(0 0 0 / 0.6), transparent 70%), radial-gradient(45% 45% at 50% 55%, rgb(34 197 132 / 0.22), transparent 70%); }
+.gift-product { filter: drop-shadow(0 28px 30px rgb(0 0 0 / 0.55)) drop-shadow(0 0 40px rgb(34 197 132 / 0.12)); }
+.gift-pill {
+    background: linear-gradient(135deg, rgb(34 197 132 / 0.95), rgb(18 138 90 / 0.95));
+    box-shadow: 0 10px 30px -10px rgb(34 197 132 / 0.8), inset 0 1px 0 rgb(255 255 255 / 0.25);
+}
+.gift-thumb { background: radial-gradient(circle at 50% 35%, #3b5248, #1a2a24 75%); }
+
+/* ── Leaderboard medals (gold / silver / bronze) ───────────────────────── */
+.rank-1 { --rk: 245 196 64;  --rk-text: #f7d56b; }
+.rank-2 { --rk: 190 200 212; --rk-text: #dfe5ec; }
+.rank-3 { --rk: 214 136 78;  --rk-text: #f0ae7c; }
+:root[data-theme='light'] .rank-1:not(.theme-dark *) { --rk-text: #8a6100; }
+:root[data-theme='light'] .rank-2:not(.theme-dark *) { --rk-text: #4f5b68; }
+:root[data-theme='light'] .rank-3:not(.theme-dark *) { --rk-text: #8f4a1c; }
+.board-row.rank-1, .board-row.rank-2, .board-row.rank-3 {
+    background: linear-gradient(to right, rgb(var(--rk) / 0.16), rgb(var(--rk) / 0.04) 70%);
+    border-inline-start: 3px solid rgb(var(--rk) / 0.8);
+}
+[dir='rtl'] .board-row.rank-1, [dir='rtl'] .board-row.rank-2, [dir='rtl'] .board-row.rank-3 {
+    background: linear-gradient(to left, rgb(var(--rk) / 0.16), rgb(var(--rk) / 0.04) 70%);
+}
+.rank-pill { color: var(--rk-text); background: rgb(var(--rk) / 0.14); box-shadow: inset 0 0 0 1px rgb(var(--rk) / 0.45); }
+.rank-medal { background: radial-gradient(circle at 35% 30%, rgb(255 255 255 / 0.9), rgb(var(--rk)) 45%, rgb(var(--rk) / 0.7)); box-shadow: 0 0 0 2px rgb(var(--rk) / 0.25), 0 4px 10px -2px rgb(var(--rk) / 0.6); }
