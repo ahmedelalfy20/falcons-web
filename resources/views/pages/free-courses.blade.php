@@ -2,7 +2,7 @@
     $difficulty = ['beginner' => __('Beginner'), 'intermediate' => __('Intermediate'), 'advanced' => __('Advanced')];
     $list = $videos->map(fn ($v) => ['id' => $v->id, 'title' => $v->tr('title'), 'url' => route('free-courses.video', $v)])->values();
 @endphp
-<x-layouts.site :title="__('Free Courses')" :description="__('Free trading lessons from Falcons Academy — trading basics, TradingView, candlesticks, risk management and MT5.')">
+<x-layouts.site :title="__('Free Courses')" :schema="[\App\Support\Seo::breadcrumbs([__('Free Courses') => route('free-courses')])]" :description="__('Free trading lessons from Falcons Academy — trading basics, TradingView, candlesticks, risk management and MT5.')">
     <section class="relative overflow-hidden pt-28 pb-12 sm:pt-32">
         <div class="bg-glow pointer-events-none absolute inset-0" aria-hidden="true"></div>
         <div class="container-x relative grid items-end gap-8 lg:grid-cols-12">

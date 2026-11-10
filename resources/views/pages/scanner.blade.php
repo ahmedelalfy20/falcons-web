@@ -1,4 +1,18 @@
-<x-layouts.site :title="$scanner->tr('name')" :description="$scanner->tr('summary')">
+@php
+    $seoSchema = [
+        array_filter([
+            '@type' => 'SoftwareApplication',
+            'name' => $scanner->tr('name').' — '.__('Trading scanner'),
+            'applicationCategory' => 'FinanceApplication',
+            'operatingSystem' => 'TradingView',
+            'description' => $scanner->tr('summary'),
+            'image' => ($scanner->images[0] ?? null) ? media($scanner->images[0]) : null,
+            'publisher' => ['@id' => route('home').'#organization'],
+        ]),
+        \App\Support\Seo::breadcrumbs([__('Scanners') => route('home').'#scanners', $scanner->tr('name') => route('scanners.show', $scanner)]),
+    ];
+@endphp
+<x-layouts.site :title="$scanner->tr('name').' — '.__('Trading scanner')" :description="$scanner->tr('summary') ?: $scanner->tr('tagline')" :image="$scanner->images[0] ?? null" :schema="$seoSchema">
     <article style="--accent: {{ $scanner->accent }}">
         <header class="relative overflow-hidden pt-28 pb-12 sm:pt-32 lg:pb-16">
             <div class="pointer-events-none absolute inset-0 opacity-60" style="background: radial-gradient(50% 60% at 85% 0%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 70%)" aria-hidden="true"></div>

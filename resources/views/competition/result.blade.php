@@ -1,5 +1,5 @@
 @php $status = $registration->status->value; @endphp
-<x-layouts.site :title="__('Registration status')">
+<x-layouts.site :title="__('Registration status')" :noindex="true">
     <section class="relative flex min-h-dvh items-center pt-24 pb-16">
         <div class="bg-glow pointer-events-none absolute inset-0" aria-hidden="true"></div>
         <div class="container-x relative">

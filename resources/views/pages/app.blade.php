@@ -1,4 +1,4 @@
-<x-layouts.site :title="__('Download the Falcons app')" :description="__('Register and learn with Falcons from your phone — download the app on Google Play or the App Store.')">
+<x-layouts.site :title="__('Download the Falcons app')" :schema="[\App\Support\Seo::breadcrumbs([__('Download the Falcons app') => route('app.download')])]" :description="__('Register and learn with Falcons from your phone — download the app on Google Play or the App Store.')">
     <section class="relative overflow-hidden pt-28 pb-20 sm:pt-32 sm:pb-28">
         <div class="bg-glow pointer-events-none absolute inset-0" aria-hidden="true"></div>
         <div class="container-x relative">

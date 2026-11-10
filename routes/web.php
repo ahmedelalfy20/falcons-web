@@ -16,6 +16,8 @@ use Illuminate\Support\Facades\Route;
 | Public website
 |--------------------------------------------------------------------------
 */
+Route::get('/robots.txt', [\App\Http\Controllers\SeoController::class, 'robots'])->name('robots');
+Route::get('/sitemap.xml', [\App\Http\Controllers\SeoController::class, 'sitemap'])->name('sitemap');
 Route::get('/', [PageController::class, 'home'])->name('home');
 Route::get('/scanners/{scanner:slug}', [PageController::class, 'scanner'])->name('scanners.show');
 Route::get('/leaders/{member:slug}', [PageController::class, 'member'])->name('team.show');

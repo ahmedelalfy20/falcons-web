@@ -1,4 +1,4 @@
-<x-layouts.site :title="__('Competition')" :description="__('Live leaderboard of the Falcons Leader Referral Competition.')">
+<x-layouts.site :title="__('Leader Referral Competition')" :description="__('Falcons Leader Referral Competition: invite participants with your QR code, earn 10 points for every approved registration, climb the live Top One leaderboard and unlock gifts up to a brand-new car.')" :schema="[\App\Support\Seo::breadcrumbs([__('Competition') => route('competition')])]">
     <section class="relative overflow-hidden pt-28 pb-14 sm:pt-32 lg:pb-20">
         <div class="bg-glow pointer-events-none absolute inset-0" aria-hidden="true"></div>
         <div class="container-x relative">

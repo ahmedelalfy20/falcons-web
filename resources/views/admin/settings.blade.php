@@ -51,10 +51,10 @@
                 <h2 class="text-lg font-bold">{{ __('Vision & Mission') }}</h2>
                 <p class="text-sm text-fg-muted">{{ __('One point per line.') }}</p>
                 <div class="grid gap-4 sm:grid-cols-2">
-                    <x-field name="vision" :label="__('Vision — English')" :value="implode("\n", $vision['vision'] ?? [])" textarea rows="5" />
-                    <x-field name="vision_ar" :label="__('Vision — Arabic')" :value="implode("\n", $vision['vision_ar'] ?? [])" textarea rows="5" dir="rtl" />
-                    <x-field name="mission" :label="__('Mission — English')" :value="implode("\n", $vision['mission'] ?? [])" textarea rows="5" />
-                    <x-field name="mission_ar" :label="__('Mission — Arabic')" :value="implode("\n", $vision['mission_ar'] ?? [])" textarea rows="5" dir="rtl" />
+                    <x-field name="vision" :label="__('Vision — English')" :value="implode(PHP_EOL, $vision['vision'] ?? [])" textarea rows="5" />
+                    <x-field name="vision_ar" :label="__('Vision — Arabic')" :value="implode(PHP_EOL, $vision['vision_ar'] ?? [])" textarea rows="5" dir="rtl" />
+                    <x-field name="mission" :label="__('Mission — English')" :value="implode(PHP_EOL, $vision['mission'] ?? [])" textarea rows="5" />
+                    <x-field name="mission_ar" :label="__('Mission — Arabic')" :value="implode(PHP_EOL, $vision['mission_ar'] ?? [])" textarea rows="5" dir="rtl" />
                 </div>
             </section>
 

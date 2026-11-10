@@ -3,7 +3,7 @@
     $requireProof = (bool) $competition->config('require_transfer_proof');
     $collectCity = (bool) $competition->config('collect_city');
 @endphp
-<x-layouts.site :title="__('Register')">
+<x-layouts.site :title="__('Register')" :noindex="true">
     <section class="relative pt-24 pb-16 sm:pt-28">
         <div class="bg-glow pointer-events-none absolute inset-0" aria-hidden="true"></div>
         <div class="container-x relative">

@@ -1,4 +1,4 @@
-<x-layouts.site :title="__('Become a leader')">
+<x-layouts.site :title="__('Become a leader')" :description="__('Join the Falcons Leader Referral Competition: get your personal QR code, invite participants, collect points and unlock gifts.')" :schema="[\App\Support\Seo::breadcrumbs([__('Competition') => route('competition'), __('Become a leader') => route('leader.signup')])]">
     <section class="relative pt-24 pb-16 sm:pt-28">
         <div class="bg-glow pointer-events-none absolute inset-0" aria-hidden="true"></div>
         <div class="container-x relative">

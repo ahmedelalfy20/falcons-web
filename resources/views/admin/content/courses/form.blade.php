@@ -26,8 +26,8 @@
             <h2 class="font-bold">{{ __('Highlights') }}</h2>
             <p class="-mt-3 text-sm text-fg-muted">{{ __('3–4 short points, one per line. Shown when the level is expanded.') }}</p>
             <div class="grid gap-5 lg:grid-cols-2">
-                <x-field name="highlights" :label="__('English')" :value="implode("\n", $course->highlights ?? [])" textarea rows="5" />
-                <x-field name="highlights_ar" :label="__('Arabic')" :value="implode("\n", $course->highlights_ar ?? [])" textarea rows="5" dir="rtl" />
+                <x-field name="highlights" :label="__('English')" :value="implode(PHP_EOL, $course->highlights ?? [])" textarea rows="5" />
+                <x-field name="highlights_ar" :label="__('Arabic')" :value="implode(PHP_EOL, $course->highlights_ar ?? [])" textarea rows="5" dir="rtl" />
             </div>
         </section>
         <section class="card card-pad space-y-5">

@@ -1,4 +1,4 @@
-<x-layouts.site :title="__('Log in')">
+<x-layouts.site :title="__('Log in')" :noindex="true">
     <section class="relative flex min-h-dvh items-center pt-24 pb-16">
         <div class="bg-glow pointer-events-none absolute inset-0" aria-hidden="true"></div>
         <div class="container-x relative">

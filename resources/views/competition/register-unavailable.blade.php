@@ -8,7 +8,7 @@
         'competition_finished' => ['icon' => 'timer', 'title' => __('This round has finished'), 'retry' => false],
     ][$reason] ?? ['icon' => 'alert', 'title' => __('Registration unavailable'), 'retry' => true];
 @endphp
-<x-layouts.site :title="$meta['title']">
+<x-layouts.site :title="$meta['title']" :noindex="true">
     <section class="relative flex min-h-dvh items-center pt-24 pb-16">
         <div class="container-x">
             <div class="mx-auto max-w-md text-center">

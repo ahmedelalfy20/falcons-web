@@ -1,8 +1,8 @@
-@props(['title' => null, 'description' => null])
+@props(['title' => null, 'description' => null, 'image' => null, 'type' => 'website', 'noindex' => false, 'schema' => []])
 <!DOCTYPE html>
 <html lang="{{ app()->getLocale() }}" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}">
 <head>
-    @include('partials.head', ['title' => $title ?? null, 'description' => $description ?? null])
+    @include('partials.head', ['title' => $title ?? null, 'description' => $description ?? null, 'image' => $image, 'type' => $type, 'noindex' => $noindex, 'schema' => $schema])
     @stack('head')
 </head>
 <body class="min-h-dvh">

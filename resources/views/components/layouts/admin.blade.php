@@ -37,8 +37,7 @@
 <!DOCTYPE html>
 <html lang="{{ app()->getLocale() }}" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}">
 <head>
-    @include('partials.head', ['title' => ($title ?? $heading) ? ($title ?? $heading).' · '.__('Admin') : __('Admin'), 'description' => null])
-    <meta name="robots" content="noindex, nofollow">
+    @include('partials.head', ['title' => ($title ?? $heading) ? ($title ?? $heading).' · '.__('Admin') : __('Admin'), 'description' => null, 'noindex' => true])
 </head>
 <body class="min-h-dvh bg-ink-950" x-data="{ nav: false }" @keydown.escape.window="nav = false">
     <a href="#admin-main" class="sr-only focus:not-sr-only focus:fixed focus:start-4 focus:top-4 focus:z-[200] focus:rounded-full focus:bg-fg focus:px-4 focus:py-2 focus:text-ink-950">{{ __('Skip to content') }}</a>

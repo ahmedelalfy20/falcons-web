@@ -39,7 +39,7 @@
                 @include('partials.account-chip', ['leader' => $me, 'account' => $acct])
             @endif
             <x-theme-toggle />
-            <a href="{{ route('locale', $otherLocale) }}" class="btn btn-ghost btn-sm !px-3" hreflang="{{ $otherLocale }}" lang="{{ $otherLocale }}">
+            <a href="{{ request()->fullUrlWithQuery(['lang' => $otherLocale]) }}" class="btn btn-ghost btn-sm !px-3" hreflang="{{ $otherLocale }}" lang="{{ $otherLocale }}">
                 <x-icon name="globe" class="size-4" /> {{ $otherLocale === 'ar' ? 'العربية' : 'English' }}
             </a>
             <a href="{{ join_url() }}" target="_blank" rel="noopener" class="btn btn-primary btn-sm hidden sm:inline-flex"><x-icon name="telegram" class="size-4" />{{ __('Join us') }}</a>

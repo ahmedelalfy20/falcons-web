@@ -1,4 +1,20 @@
-<x-layouts.site :title="$member->tr('name')" :description="$member->tr('role')">
+@php
+    $seoDesc = trim(collect([$member->tr('role'), $member->tr('city'), \Illuminate\Support\Str::limit(strip_tags((string) $member->tr('bio')), 120)])->filter()->implode(' · '));
+    $seoSchema = [
+        array_filter([
+            '@type' => 'Person',
+            'name' => $member->tr('name'),
+            'jobTitle' => $member->tr('role'),
+            'image' => $member->image ? media($member->image) : null,
+            'url' => route('team.show', $member),
+            'homeLocation' => $member->tr('city') ? ['@type' => 'Place', 'name' => $member->tr('city')] : null,
+            'worksFor' => ['@id' => route('home').'#organization'],
+            'memberOf' => $member->company ? ['@type' => 'Organization', 'name' => $member->company->tr('name')] : null,
+        ]),
+        \App\Support\Seo::breadcrumbs([__('Leaders') => route('home').'#leaders', $member->tr('name') => route('team.show', $member)]),
+    ];
+@endphp
+<x-layouts.site :title="$member->tr('name')" :description="$seoDesc ?: __('Falcons Leader')" :image="$member->image" type="profile" :schema="$seoSchema">
     <article class="relative overflow-hidden pt-24 sm:pt-28">
         <div class="bg-glow pointer-events-none absolute inset-0" aria-hidden="true"></div>
         <div class="container-x relative">

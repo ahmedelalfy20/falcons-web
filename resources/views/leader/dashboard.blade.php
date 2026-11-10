@@ -9,7 +9,7 @@
     ];
     $url = $leader->referralUrl();
 @endphp
-<x-layouts.site :title="__('Leader dashboard')">
+<x-layouts.site :title="__('Leader dashboard')" :noindex="true">
     <div class="pt-24 pb-16 sm:pt-28" x-data="{ s: @js($s), status: @js($leader->status) }"
          @live-data.window="$event.detail.stats && (s = $event.detail.stats); if ($event.detail.leader_status && $event.detail.leader_status !== status) { location.reload() }">
         <div x-data="poller(@js(route('leader.live')), {{ $leader->isPending() ? 8000 : 10000 }})"></div>

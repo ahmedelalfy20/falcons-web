@@ -74,7 +74,15 @@ class PageController extends Controller
     {
         $request->session()->put('locale', $locale);
         $back = url()->previous();
+        if (! str_starts_with($back, url('/'))) {
+            return redirect()->route('home');
+        }
+        // Drop a ?lang= left on the previous URL so it does not override the new choice.
+        $parts = parse_url($back);
+        parse_str($parts['query'] ?? '', $query);
+        unset($query['lang']);
+        $clean = strtok($back, '?').($query ? '?'.http_build_query($query) : '').(isset($parts['fragment']) ? '#'.$parts['fragment'] : '');
 
-        return redirect()->to(str_starts_with($back, url('/')) ? $back : route('home'));
+        return redirect()->to($clean);
     }
 }
