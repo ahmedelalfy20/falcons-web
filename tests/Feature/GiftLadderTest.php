@@ -253,4 +253,25 @@ class GiftLadderTest extends TestCase
         $this->get('/leader')->assertOk()
             ->assertSee(__('Points history'))->assertSee(__('Approved registration'))->assertSee('+10');
     }
+
+    public function test_gift_ladder_migration_adds_the_seven_gifts_with_bundled_photos_once(): void
+    {
+        $migration = require database_path('migrations/2026_11_10_000300_seed_gift_ladder.php');
+        app()->instance('seed-gift-ladder', true);
+        $migration->up();
+        $migration->up(); // idempotent
+
+        $gifts = Gift::with('options')->orderBy('points_required')->get();
+        $this->assertSame([60, 180, 400, 1400, 2700, 5200, 20200], $gifts->pluck('points_required')->all());
+        $this->assertSame(9, $gifts->sum(fn ($g) => $g->options->count()));
+        foreach ($gifts->flatMap->options as $o) {
+            $this->assertFileExists(public_path($o->image));
+            $this->assertFileExists(public_path(str_replace('.webp', '-thumb.webp', $o->image)));
+        }
+        $this->assertSame('cover', $gifts->firstWhere('name', 'Trip to Dahab')->options->first()->fit);
+        $this->assertTrue($gifts->firstWhere('points_required', 1400)->hasChoice());
+
+        $this->competition();
+        $this->get('/')->assertOk()->assertSee('media/gifts/airpods-pro.webp', false)->assertSee('Chery Arrizo 5 (2026)');
+    }
 }
