@@ -178,7 +178,7 @@
                  @live-data.window="if ($event.detail.leaderboard) { const prev = Object.fromEntries(rows.map(r => [r.name, r.score])); rows = $event.detail.leaderboard; me = $event.detail.me ?? null; rows.forEach(r => { if (prev[r.name] !== undefined && prev[r.name] !== r.score) flash[r.name] = Date.now() }) }">
                 <div class="mb-4 flex flex-wrap items-end justify-between gap-3">
                     <div>
-                        <h2 class="text-xl font-bold">{{ __('Top leaders') }}</h2>
+                        <h2 class="text-xl font-bold">{{ __('Top One') }}</h2>
                         <p class="text-sm text-fg-muted">@if ($round){{ $round->displayName() }} · @endif{{ __('Top 20 leaders') }}</p>
                     </div>
                     <p class="flex items-center gap-2 text-sm text-fg-subtle"><span class="size-2 rounded-full bg-brand-400"></span>{{ __('Updates automatically') }}</p>

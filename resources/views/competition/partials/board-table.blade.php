@@ -16,7 +16,7 @@
         <x-empty icon="trophy" :title="__('No leaders yet')" :text="__('Be the first leader on the board.')" />
     </template>
 
-    <ol aria-label="{{ __('Top leaders') }}">
+    <ol aria-label="{{ __('Top One') }}">
         <template x-for="row in rows" :key="row.name + row.rank">
             @include('competition.partials.board-row')
         </template>

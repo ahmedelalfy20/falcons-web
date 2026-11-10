@@ -78,7 +78,7 @@
                     <div class="flex flex-wrap items-end justify-between gap-4">
                         <div>
                             <p class="eyebrow">{{ __('Live leaderboard') }}</p>
-                            <h2 id="board-title" class="h-section mt-3">{{ __('Top leaders') }}</h2>
+                            <h2 id="board-title" class="h-section mt-3">{{ __('Top One') }}</h2>
                             <p class="mt-2 text-sm text-fg-muted">{{ $round->displayName() }} · {{ __('Top 20 leaders') }}</p>
                         </div>
                         <p class="flex items-center gap-2 text-sm text-fg-subtle"><span class="relative flex size-2"><span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-brand-400 opacity-60 motion-reduce:hidden"></span><span class="relative inline-flex size-2 rounded-full bg-brand-400"></span></span>{{ __('Updates automatically') }}</p>
