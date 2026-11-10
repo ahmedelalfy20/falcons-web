@@ -10,7 +10,13 @@ class GiftOption extends Model
 {
     use Translatable;
 
-    protected $fillable = ['gift_id', 'image', 'label', 'label_ar', 'sort_order'];
+    protected $fillable = ['gift_id', 'image', 'fit', 'label', 'label_ar', 'sort_order'];
+
+    /** Full-bleed photo (e.g. a trip) rather than a cut-out product. */
+    public function isPhoto(): bool
+    {
+        return $this->fit === 'cover';
+    }
 
     public function gift(): BelongsTo
     {

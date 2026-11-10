@@ -29,7 +29,7 @@
         <section class="card card-pad space-y-4">
             <div>
                 <h2 class="font-bold">{{ __('Gift photos') }}</h2>
-                <p class="mt-1 text-sm text-fg-muted">{{ __('One photo = a single gift. Two or more photos = the leader chooses one of them.') }}</p>
+                <p class="mt-1 text-sm text-fg-muted">{{ __('One photo = a single gift. Two or more photos = the leader chooses one of them.') }} {{ __('Product photos on a white background are cut out automatically; other photos (like a trip) fill the card.') }}</p>
             </div>
             @error('new_options')<x-alert level="danger">{{ $message }}</x-alert>@enderror
 
@@ -44,6 +44,10 @@
                             <input name="options[{{ $o->id }}][label]" value="{{ old("options.{$o->id}.label", $o->label) }}" class="input" placeholder="{{ __('Option name — English (optional)') }}" maxlength="120" aria-label="{{ __('Option name — English (optional)') }}">
                             <input name="options[{{ $o->id }}][label_ar]" value="{{ old("options.{$o->id}.label_ar", $o->label_ar) }}" class="input" dir="rtl" placeholder="{{ __('Option name — Arabic (optional)') }}" maxlength="120" aria-label="{{ __('Option name — Arabic (optional)') }}">
                         </div>
+                        <select name="options[{{ $o->id }}][fit]" class="input mt-2" aria-label="{{ __('How the photo is shown') }}">
+                            <option value="contain" @selected($o->fit === 'contain')>{{ __('Cut-out product (floats on the card)') }}</option>
+                            <option value="cover" @selected($o->fit === 'cover')>{{ __('Full photo (fills the card)') }}</option>
+                        </select>
                         <label class="mt-3 inline-flex cursor-pointer items-center gap-2 text-sm text-danger">
                             <input type="checkbox" name="options[{{ $o->id }}][remove]" value="1" x-model="remove" @change="kept += remove ? -1 : 1" class="accent-current"> {{ __('Remove this photo') }}
                         </label>

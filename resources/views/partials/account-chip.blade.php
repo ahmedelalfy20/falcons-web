@@ -18,7 +18,7 @@
             </div>
             @if ($next)
                 <div class="mt-3 flex items-center gap-3 rounded-xl bg-ink-900 p-3">
-                    @if ($next['image'])<img src="{{ $next['image'] }}" alt="" class="size-11 shrink-0 object-contain">@endif
+                    @if ($next['image'])<img src="{{ $next['image'] }}" alt="" @class(['size-11 shrink-0', 'rounded-lg object-cover' => $next['photo'] ?? false, 'object-contain' => ! ($next['photo'] ?? false)])>@endif
                     <div class="min-w-0 flex-1">
                         <p class="truncate text-sm font-semibold">{{ $next['name'] }}</p>
                         <p class="text-xs text-fg-muted">{{ __(':n points left', ['n' => number_format($account['remaining'])]) }}</p>

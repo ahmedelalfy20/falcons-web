@@ -37,7 +37,7 @@
                 <div class="flex items-center gap-4 rounded-2xl border border-white/10 bg-black/25 p-4">
                     @if ($next['image'])
                         <span class="relative flex size-20 shrink-0 items-center justify-center rounded-xl bg-[radial-gradient(circle_at_50%_40%,rgb(34_197_132/0.25),transparent_70%)]">
-                            <img src="{{ $next['image'] }}" alt="" class="max-h-full max-w-full object-contain drop-shadow-[0_10px_18px_rgb(0_0_0/0.6)]">
+                            <img src="{{ $next['image'] }}" alt="" @class(['size-full rounded-xl object-cover' => $next['photo'] ?? false, 'max-h-full max-w-full object-contain drop-shadow-[0_10px_18px_rgb(0_0_0/0.6)]' => ! ($next['photo'] ?? false)])>
                         </span>
                     @endif
                     <div class="min-w-0 flex-1">

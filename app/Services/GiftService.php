@@ -84,6 +84,7 @@ class GiftService
                 'name' => $next->tr('name'),
                 'points' => $next->points_required,
                 'image' => $next->options->first()?->imageUrl(true),
+                'photo' => (bool) $next->options->first()?->isPhoto(),
             ] : null,
         ];
     }

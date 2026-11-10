@@ -37,10 +37,22 @@
             <div class="gift-hero theme-dark relative h-60 overflow-hidden sm:h-64">
                 <span class="gift-hero-num num pointer-events-none absolute -bottom-10 end-[18%] select-none text-[11rem] font-extrabold leading-none" aria-hidden="true">{{ str_pad($loop->iteration, 2, '0', STR_PAD_LEFT) }}</span>
 
+                {{-- Full-bleed photos (e.g. a trip) --}}
+                @foreach ($opts as $i => $o)
+                    @if ($o->isPhoto())
+                        <div class="absolute inset-0" x-show="view === {{ $i }}" @if ($i !== $startIndex) x-cloak @endif x-transition:enter="transition duration-500 ease-out" x-transition:enter-start="opacity-0">
+                            <img src="{{ $o->imageUrl() }}" alt="{{ $o->tr('label') ?: $gift->tr('name') }}" loading="lazy" decoding="async"
+                                 class="h-full w-full object-cover transition-transform duration-[1.2s] ease-[var(--ease-out-soft)] group-hover:scale-[1.05]">
+                            <span class="gift-photo-shade absolute inset-0" aria-hidden="true"></span>
+                        </div>
+                    @endif
+                @endforeach
+
                 {{-- Product photo(s), cross-fading when the leader switches options --}}
                 <div class="absolute inset-y-0 end-0 w-[50%]">
-                    <span class="gift-spot absolute inset-0" aria-hidden="true"></span>
+                    <span class="gift-spot absolute inset-0" aria-hidden="true" @if ($opts->every(fn ($o) => $o->isPhoto())) hidden @endif></span>
                     @foreach ($opts as $i => $o)
+                        @continue($o->isPhoto())
                         <img src="{{ $o->imageUrl() }}" alt="{{ $o->tr('label') ?: $gift->tr('name') }}" loading="lazy" decoding="async"
                              x-show="view === {{ $i }}" @if ($i !== $startIndex) x-cloak @endif
                              x-transition:enter="transition duration-500 ease-out" x-transition:enter-start="opacity-0 scale-95 translate-y-2"
@@ -85,7 +97,7 @@
                                     @if ($canPick) role="radio" :aria-checked="pick === {{ $o->id }}" @endif
                                     class="relative flex items-center gap-2.5 rounded-xl border p-2 text-start transition-colors"
                                     :class="{{ $canPick ? "pick === {$o->id}" : "view === {$i}" }} ? 'border-brand-500 bg-brand-500/[0.08]' : 'border-line hover:border-line-strong'">
-                                <span class="gift-thumb theme-dark flex size-11 shrink-0 items-center justify-center rounded-lg"><img src="{{ $o->imageUrl(true) }}" alt="" class="max-h-[85%] max-w-[85%] object-contain"></span>
+                                <span class="gift-thumb theme-dark flex size-11 shrink-0 items-center justify-center overflow-hidden rounded-lg"><img src="{{ $o->imageUrl(true) }}" alt="" @class(['h-full w-full object-cover' => $o->isPhoto(), 'max-h-[85%] max-w-[85%] object-contain' => ! $o->isPhoto()])></span>
                                 <span class="min-w-0 truncate text-sm font-medium">{{ $o->tr('label') ?: __('Option :n', ['n' => $i + 1]) }}</span>
                                 @if ($canPick)<span x-show="pick === {{ $o->id }}" x-cloak class="absolute -top-1.5 -end-1.5 flex size-5 items-center justify-center rounded-full bg-brand-500 text-ink-950"><x-icon name="check" class="size-3" /></span>@endif
                             </button>

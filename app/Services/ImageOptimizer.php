@@ -33,11 +33,15 @@ class ImageOptimizer
             $source = $this->cropSquare($source);
         }
         if ($cutout) {
-            $source = $this->removePlainBackground($this->scaleDown($source, $maxWidth));
+            // Trim transparent padding first (store images often sit in a padded square),
+            // then lift a plain studio background, then trim again.
+            imagealphablending($source, false);
+            $source = $this->trimTransparent($this->removePlainBackground($this->trimTransparent($this->scaleDown($source, $maxWidth), false)));
         }
 
         $disk = $private ? 'local' : 'public';
         $name = Str::random(24);
+        $transparent = $this->hasTransparentCorner($source);
         $main = $this->resizeAndSave($source, "{$folder}/{$name}.webp", $maxWidth, $quality, $disk);
         $thumb = $thumbWidth ? $this->resizeAndSave($source, "{$folder}/{$name}-thumb.webp", $thumbWidth, 74, $disk) : null;
         imagedestroy($source);
@@ -49,6 +53,7 @@ class ImageOptimizer
             'thumb' => $thumb ? $prefix.$thumb['path'] : null,
             'width' => $main['w'],
             'height' => $main['h'],
+            'transparent' => $transparent,
         ];
     }
 
@@ -75,6 +80,19 @@ class ImageOptimizer
         Storage::disk($disk)->put($path, $bytes);
 
         return ['path' => $path, 'w' => $w, 'h' => $h];
+    }
+
+    private function hasTransparentCorner(\GdImage $img): bool
+    {
+        $w = imagesx($img) - 1;
+        $h = imagesy($img) - 1;
+        foreach ([[0, 0], [$w, 0], [0, $h], [$w, $h]] as [$x, $y]) {
+            if (((imagecolorat($img, $x, $y) >> 24) & 0x7F) >= 100) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private function scaleDown(\GdImage $src, int $maxWidth): \GdImage
@@ -159,11 +177,19 @@ class ImageOptimizer
         }
 
         // Trim the now-empty margins so the product fills its frame.
+        return $img;
+    }
+
+    /** Crop away fully transparent margins (with a small breathing pad). */
+    private function trimTransparent(\GdImage $img, bool $pad = true): \GdImage
+    {
+        $w = imagesx($img);
+        $h = imagesy($img);
         [$minX, $minY, $maxX, $maxY] = [$w, $h, -1, -1];
         for ($y = 0; $y < $h; $y++) {
             for ($x = 0; $x < $w; $x++) {
-                if ($seen[$y * $w + $x] && ((imagecolorat($img, $x, $y) >> 24) & 0x7F) >= 120) {
-                    continue; // removed background
+                if (((imagecolorat($img, $x, $y) >> 24) & 0x7F) >= 120) {
+                    continue;
                 }
                 if ($x < $minX) $minX = $x;
                 if ($x > $maxX) $maxX = $x;
@@ -171,19 +197,19 @@ class ImageOptimizer
                 if ($y > $maxY) $maxY = $y;
             }
         }
-        if ($maxX > $minX + 8 && $maxY > $minY + 8) {
-            $pad = (int) round(max($maxX - $minX, $maxY - $minY) * 0.04);
-            $minX = max(0, $minX - $pad); $minY = max(0, $minY - $pad);
-            $cw = min($w, $maxX + $pad + 1) - $minX; $ch = min($h, $maxY + $pad + 1) - $minY;
-            $crop = imagecreatetruecolor($cw, $ch);
-            imagealphablending($crop, false);
-            imagesavealpha($crop, true);
-            imagecopy($crop, $img, 0, 0, $minX, $minY, $cw, $ch);
-            imagedestroy($img);
-            $img = $crop;
+        if ($maxX <= $minX + 8 || $maxY <= $minY + 8 || ($minX === 0 && $minY === 0 && $maxX === $w - 1 && $maxY === $h - 1)) {
+            return $img;
         }
+        $pad = $pad ? (int) round(max($maxX - $minX, $maxY - $minY) * 0.04) : 0;
+        $minX = max(0, $minX - $pad); $minY = max(0, $minY - $pad);
+        $cw = min($w, $maxX + $pad + 1) - $minX; $ch = min($h, $maxY + $pad + 1) - $minY;
+        $crop = imagecreatetruecolor($cw, $ch);
+        imagealphablending($crop, false);
+        imagesavealpha($crop, true);
+        imagecopy($crop, $img, 0, 0, $minX, $minY, $cw, $ch);
+        imagedestroy($img);
 
-        return $img;
+        return $crop;
     }
 
     /** Centre-crop to a square, biased towards the top (faces in portraits). */

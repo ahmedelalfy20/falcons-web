@@ -111,6 +111,8 @@ class GiftController extends Controller
             'options.*.label' => ['nullable', 'string', 'max:120'],
             'options.*.label_ar' => ['nullable', 'string', 'max:120'],
             'options.*.remove' => ['nullable', 'boolean'],
+            'options.*.fit' => ['nullable', 'in:contain,cover'],
+            'new_options.*.fit' => ['nullable', 'in:auto,contain,cover'],
             'new_options' => ['array', 'max:'.self::MAX_OPTIONS],
             'new_options.*.image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:8192'],
             'new_options.*.label' => ['nullable', 'string', 'max:120'],
@@ -149,7 +151,10 @@ class GiftController extends Controller
 
                 continue;
             }
-            $option->update(['label' => $row['label'] ?? null, 'label_ar' => $row['label_ar'] ?? null, 'sort_order' => $order++]);
+            $option->update([
+                'label' => $row['label'] ?? null, 'label_ar' => $row['label_ar'] ?? null, 'sort_order' => $order++,
+                'fit' => in_array($row['fit'] ?? null, ['contain', 'cover'], true) ? $row['fit'] : $option->fit,
+            ]);
         }
 
         foreach ((array) $request->input('new_options', []) as $i => $row) {
@@ -158,12 +163,15 @@ class GiftController extends Controller
                 continue;
             }
             try {
-                $path = $this->images->store($file, 'gifts', 1200, 480, 86, cutout: true)['path'];
+                $stored = $this->images->store($file, 'gifts', 1400, 520, 86, cutout: true);
+                $path = $stored['path'];
             } catch (\RuntimeException) {
                 throw ValidationException::withMessages(["new_options.{$i}.image" => __('We could not read this image. Please upload a JPG, PNG or WebP photo.')]);
             }
             GiftOption::create([
                 'gift_id' => $gift->id, 'image' => $path,
+                // Cut-out products float on the card; regular photos fill it.
+                'fit' => in_array($row['fit'] ?? null, ['contain', 'cover'], true) ? $row['fit'] : ($stored['transparent'] ? 'contain' : 'cover'),
                 'label' => $row['label'] ?? null, 'label_ar' => $row['label_ar'] ?? null, 'sort_order' => $order++,
             ]);
         }

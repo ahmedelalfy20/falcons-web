@@ -390,6 +390,9 @@ html.theme-transition, html.theme-transition *, html.theme-transition *::before,
     background: linear-gradient(135deg, rgb(34 197 132 / 0.95), rgb(18 138 90 / 0.95));
     box-shadow: 0 10px 30px -10px rgb(34 197 132 / 0.8), inset 0 1px 0 rgb(255 255 255 / 0.25);
 }
+.gift-photo-shade { background: linear-gradient(to right, rgb(6 12 10 / 0.92) 0%, rgb(6 12 10 / 0.55) 45%, rgb(6 12 10 / 0.1) 80%), linear-gradient(to top, rgb(6 12 10 / 0.6), transparent 45%); }
+[dir='rtl'] .gift-photo-shade { background: linear-gradient(to left, rgb(6 12 10 / 0.92) 0%, rgb(6 12 10 / 0.55) 45%, rgb(6 12 10 / 0.1) 80%), linear-gradient(to top, rgb(6 12 10 / 0.6), transparent 45%); }
+.gift-photo-shade-bottom { background: linear-gradient(to top, rgb(6 12 10 / 0.75), transparent 55%); }
 .gift-thumb { background: radial-gradient(circle at 50% 35%, #3b5248, #1a2a24 75%); }
 
 /* ── Leaderboard medals (gold / silver / bronze) ───────────────────────── */
