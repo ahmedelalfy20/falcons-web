@@ -4,7 +4,7 @@
 --}}
 <div class="overflow-hidden rounded-[var(--radius-card)] border border-line bg-ink-850">
     {{-- Column headings --}}
-    <div class="grid grid-cols-[5.5rem_1fr_5.5rem] items-center gap-3 border-b border-line bg-ink-900/60 px-4 py-3 text-xs font-semibold uppercase tracking-[0.1em] text-fg-subtle sm:grid-cols-[6.5rem_1fr_7rem_6rem] sm:px-6 lg:grid-cols-[7rem_1fr_11rem_7rem_7rem] rtl:tracking-normal" aria-hidden="true">
+    <div class="grid grid-cols-[4.25rem_1fr_3.75rem] items-center gap-3 border-b border-line bg-ink-900/60 px-4 py-3 text-xs font-semibold uppercase tracking-[0.1em] text-fg-subtle sm:grid-cols-[6.5rem_1fr_7rem_6rem] sm:px-6 lg:grid-cols-[7rem_1fr_11rem_7rem_7rem] rtl:tracking-normal" aria-hidden="true">
         <span>{{ __('Rank') }}</span>
         <span>{{ __('Leader') }}</span>
         <span class="hidden lg:block">{{ __('Team') }}</span>

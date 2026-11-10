@@ -8,7 +8,7 @@
         <span class="hidden text-xs text-fg-muted sm:inline">{{ __('points') }}</span>
     </button>
     <div x-show="acct" x-cloak x-transition.origin.top
-         class="absolute end-0 top-full z-50 mt-2 w-[min(20rem,calc(100vw-2rem))] overflow-hidden rounded-2xl border border-line bg-ink-850 shadow-2xl">
+         class="fixed inset-x-4 top-[4.25rem] z-50 overflow-hidden sm:absolute sm:inset-x-auto sm:end-0 sm:top-full sm:mt-2 sm:w-80 rounded-2xl border border-line bg-ink-850 shadow-2xl">
         <div class="border-b border-line p-4">
             <p class="truncate font-bold">{{ $leader->name }}</p>
             <div class="mt-3 grid grid-cols-3 gap-2 text-center">
