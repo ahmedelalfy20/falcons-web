@@ -30,11 +30,16 @@ class RoundService
             // Serialise round-number allocation per competition.
             Competition::whereKey($competition->id)->lockForUpdate()->first();
             $number = (int) Round::where('competition_id', $competition->id)->max('number') + 1;
+            // What visitors see continues from the previous round, or restarts at 1.
+            $previous = Round::where('competition_id', $competition->id)->orderByDesc('number')->first();
+            $shown = ! empty($attributes['restart_numbering']) || ! $previous ? 1 : $previous->shownNumber() + 1;
 
             $round = Round::create([
                 'competition_id' => $competition->id,
                 'number' => $number,
-                'name' => $attributes['name'] ?? null,
+                'display_number' => $shown,
+                'name' => filled($attributes['name'] ?? null) ? $attributes['name'] : null,
+                'name_ar' => filled($attributes['name_ar'] ?? null) ? $attributes['name_ar'] : null,
                 'status' => RoundStatus::Ready,
                 'duration_seconds' => max(60, (int) ($attributes['duration_seconds'] ?? $competition->config('default_round_minutes') * 60)),
                 'registration_enabled' => (bool) ($attributes['registration_enabled'] ?? true),
@@ -45,6 +50,21 @@ class RoundService
 
             return $round;
         });
+    }
+
+    /** Rename a round and/or change the number visitors see. */
+    public function rename(Round $round, array $details, ?User $actor = null): Round
+    {
+        $before = ['name' => $round->name, 'name_ar' => $round->name_ar, 'display_number' => $round->shownNumber()];
+        $round->update([
+            'name' => filled($details['name'] ?? null) ? $details['name'] : null,
+            'name_ar' => filled($details['name_ar'] ?? null) ? $details['name_ar'] : null,
+            'display_number' => (int) $details['display_number'],
+        ]);
+        $this->audit->log('round.renamed', $round, ['before' => $before, 'after' => ['name' => $round->name, 'name_ar' => $round->name_ar, 'display_number' => $round->display_number]], $actor);
+        $this->changed($round);
+
+        return $round;
     }
 
     public function start(Round $round, ?User $actor = null): Round
@@ -167,9 +187,9 @@ class RoundService
     }
 
     /** Finish the live round (if any) and create the next one. Previous results are kept. */
-    public function startNewRound(Competition $competition, int $durationSeconds, bool $startNow, ?User $actor = null): Round
+    public function startNewRound(Competition $competition, int $durationSeconds, bool $startNow, ?User $actor = null, array $details = []): Round
     {
-        return DB::transaction(function () use ($competition, $durationSeconds, $startNow, $actor) {
+        return DB::transaction(function () use ($competition, $durationSeconds, $startNow, $actor, $details) {
             $live = Round::where('competition_id', $competition->id)
                 ->whereIn('status', [RoundStatus::Running->value, RoundStatus::Paused->value, RoundStatus::Ready->value, RoundStatus::Draft->value])
                 ->get();
@@ -181,7 +201,7 @@ class RoundService
                     $this->mutate($round, fn (Round $r) => $this->doFinish($r, $actor, false));
                 }
             }
-            $round = $this->create($competition, ['duration_seconds' => $durationSeconds], $actor);
+            $round = $this->create($competition, ['duration_seconds' => $durationSeconds] + $details, $actor);
 
             return $startNow ? $this->start($round, $actor) : $round;
         });

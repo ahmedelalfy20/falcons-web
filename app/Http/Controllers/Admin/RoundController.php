@@ -22,14 +22,33 @@ class RoundController extends Controller
             'duration_hours' => ['required', 'integer', 'min:0', 'max:720'],
             'duration_minutes' => ['required', 'integer', 'min:0', 'max:59'],
             'start_now' => ['sometimes', 'boolean'],
+            'name' => ['nullable', 'string', 'max:80'],
+            'name_ar' => ['nullable', 'string', 'max:80'],
+            'restart_numbering' => ['sometimes', 'boolean'],
         ]);
         $seconds = $data['duration_hours'] * 3600 + $data['duration_minutes'] * 60;
         if ($seconds < 60) {
             return back()->withErrors(['duration_minutes' => __('A round must last at least one minute.')]);
         }
-        $round = $this->rounds->startNewRound($competition, $seconds, $request->boolean('start_now'), $request->user());
+        $round = $this->rounds->startNewRound($competition, $seconds, $request->boolean('start_now'), $request->user(), [
+            'name' => $data['name'] ?? null, 'name_ar' => $data['name_ar'] ?? null, 'restart_numbering' => $request->boolean('restart_numbering'),
+        ]);
 
         return redirect()->route('admin.competition.index')->with('success', __(':round created.', ['round' => $round->displayName()]));
+    }
+
+    /** Rename a round or change its shown number (e.g. restart the count at Round 1). */
+    public function rename(Request $request, Round $round)
+    {
+        $this->authorize('create', Round::class);
+        $data = $request->validate([
+            'name' => ['nullable', 'string', 'max:80'],
+            'name_ar' => ['nullable', 'string', 'max:80'],
+            'display_number' => ['required', 'integer', 'min:1', 'max:100000'],
+        ]);
+        $this->rounds->rename($round, $data, $request->user());
+
+        return back()->with('success', __('Round details saved.'));
     }
 
     public function show(Round $round, ScoreService $scores)

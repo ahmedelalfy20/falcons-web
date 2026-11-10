@@ -7,6 +7,22 @@
         @endcan
     </x-slot:actions>
 
+    @can('create', App\Models\Round::class)
+        <details class="card card-pad mb-5 group" @if ($errors->has('display_number') || $errors->has('name') || $errors->has('name_ar')) open @endif>
+            <summary class="flex cursor-pointer list-none items-center justify-between gap-3">
+                <span><span class="font-bold">{{ __('Round name & number') }}</span> <span class="ms-2 text-sm text-fg-muted">{{ __('Shown to visitors as “:name”', ['name' => $round->displayName()]) }}</span></span>
+                <span class="btn btn-outline btn-sm"><x-icon name="edit" class="size-4" />{{ __('Edit') }}</span>
+            </summary>
+            <form method="POST" action="{{ route('admin.rounds.rename', $round) }}" class="mt-5 grid gap-4 sm:grid-cols-3">
+                @csrf @method('PUT')
+                <x-field name="display_number" type="number" :label="__('Round number')" :value="$round->shownNumber()" min="1" required :hint="__('Set 1 to restart the count from this round.')" />
+                <x-field name="name" :label="__('Custom name — English (optional)')" :value="$round->name" maxlength="80" :hint="__('Replaces “Round N” when set.')" />
+                <x-field name="name_ar" :label="__('Custom name — Arabic (optional)')" :value="$round->name_ar" dir="rtl" maxlength="80" />
+                <div class="sm:col-span-3"><button class="btn btn-primary">{{ __('Save') }}</button></div>
+            </form>
+        </details>
+    @endcan
+
     <dl class="grid grid-cols-2 gap-3 lg:grid-cols-5">
         @foreach ([
             [__('Started'), $round->started_at?->translatedFormat('j M Y, H:i') ?? '—'],

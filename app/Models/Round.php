@@ -13,7 +13,7 @@ class Round extends Model
     use HasFactory;
 
     protected $fillable = [
-        'competition_id', 'number', 'name', 'status', 'duration_seconds', 'started_at', 'paused_at',
+        'competition_id', 'number', 'display_number', 'name', 'name_ar', 'status', 'duration_seconds', 'started_at', 'paused_at',
         'ends_at', 'remaining_seconds', 'finished_at', 'registration_enabled',
     ];
 
@@ -44,9 +44,19 @@ class Round extends Model
         return $this->hasMany(LeaderScore::class);
     }
 
+    /** The number visitors see (numbering can be restarted from 1). */
+    public function shownNumber(): int
+    {
+        return (int) ($this->display_number ?? $this->number);
+    }
+
+    /** Custom name in the current language, else "Round N". */
     public function displayName(): string
     {
-        return $this->name ?: __('Round :n', ['n' => $this->number]);
+        // Arabic falls back to the English name; English shows "Round N" when it has no name of its own.
+        $custom = app()->getLocale() === 'ar' ? ($this->name_ar ?: $this->name) : $this->name;
+
+        return $custom ?: __('Round :n', ['n' => $this->shownNumber()]);
     }
 
     /** Seconds left according to the server clock. */

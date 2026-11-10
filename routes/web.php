@@ -102,6 +102,7 @@ Route::middleware(['auth', 'can:access-admin'])->prefix('admin')->name('admin.')
     Route::put('/competitions/{competition}', [Admin\CompetitionController::class, 'update'])->name('competitions.update');
     Route::post('/competitions/{competition}/rounds', [Admin\RoundController::class, 'store'])->name('rounds.store');
     Route::get('/rounds/{round}', [Admin\RoundController::class, 'show'])->name('rounds.show');
+    Route::put('/rounds/{round}/details', [Admin\RoundController::class, 'rename'])->name('rounds.rename');
     Route::post('/rounds/{round}/start', [Admin\RoundController::class, 'start'])->name('rounds.start');
     Route::post('/rounds/{round}/pause', [Admin\RoundController::class, 'pause'])->name('rounds.pause');
     Route::post('/rounds/{round}/resume', [Admin\RoundController::class, 'resume'])->name('rounds.resume');

@@ -972,5 +972,19 @@
     "Join the Falcons Leader Referral Competition: get your personal QR code, invite participants, collect points and unlock gifts.": "انضم لمسابقة قادة فالكونز للإحالة: خد كود QR الخاص بيك، وادعُ المشاركين، واجمع النقاط وافتح الهدايا.",
     "Professional Trading Education & Mentorship": "تعليم وإرشاد احترافي في التداول",
     "Trading scanner": "سكانر تداول",
-    "Mahmoud Magdy, founder of Falcons Academy": "محمود مجدي، مؤسس أكاديمية فالكونز"
+    "Mahmoud Magdy, founder of Falcons Academy": "محمود مجدي، مؤسس أكاديمية فالكونز",
+    "Round name — English (optional)": "اسم الجولة — بالإنجليزية (اختياري)",
+    "Round name — Arabic (optional)": "اسم الجولة — بالعربية (اختياري)",
+    "e.g. Ramadan round": "e.g. Ramadan round",
+    "Restart numbering from Round 1": "ابدأ الترقيم من الجولة 1",
+    "Off: this becomes Round :n.": "لو مقفول: هتبقى الجولة :n.",
+    "Round name & number": "اسم ورقم الجولة",
+    "Shown to visitors as “:name”": "بتظهر للزوار باسم «:name»",
+    "Round number": "رقم الجولة",
+    "Set 1 to restart the count from this round.": "اكتب 1 عشان الترقيم يبدأ من الأول من الجولة دي.",
+    "Custom name — English (optional)": "اسم مخصص — بالإنجليزية (اختياري)",
+    "Replaces “Round N” when set.": "لو كتبته هيظهر بدل «الجولة رقم».",
+    "Custom name — Arabic (optional)": "اسم مخصص — بالعربية (اختياري)",
+    "Round details saved.": "تم حفظ بيانات الجولة.",
+    "Save": "حفظ"
 }

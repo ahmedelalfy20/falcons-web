@@ -96,6 +96,13 @@
                                 <x-field name="duration_hours" type="number" :label="__('Hours')" :value="intdiv($def, 60)" min="0" max="720" required />
                                 <x-field name="duration_minutes" type="number" :label="__('Minutes')" :value="$def % 60" min="0" max="59" required />
                             </div>
+                            <div class="grid gap-3 sm:grid-cols-2">
+                                <x-field name="name" :label="__('Round name — English (optional)')" :placeholder="__('e.g. Ramadan round')" maxlength="80" />
+                                <x-field name="name_ar" :label="__('Round name — Arabic (optional)')" placeholder="مثال: جولة رمضان" dir="rtl" maxlength="80" />
+                            </div>
+                            @if ($round)
+                                <x-toggle name="restart_numbering" :label="__('Restart numbering from Round 1')" :hint="__('Off: this becomes Round :n.', ['n' => $round->shownNumber() + 1])" />
+                            @endif
                             <x-toggle name="start_now" :label="__('Start the timer immediately')" :checked="true" />
                             <button class="btn btn-primary w-full"><x-icon name="plus" class="size-4" />{{ $round ? __('Start new round') : __('Create first round') }}</button>
                         </form>
